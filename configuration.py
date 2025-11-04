@@ -1,4 +1,4 @@
-import torch, os
+import torch, os, torch_geometric.utils, torch_geometric.transforms
 import torch.nn as nn
 import numpy as np
 import torch_geometric.nn as geo_nn
