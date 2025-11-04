@@ -1,12 +1,4 @@
-import torch
-import numpy as np
-import torch_geometric
-
-import pandas as pd
-import os
-import networkx as nx
-import sklearn as sk
-
+from configuration import *
 
 def load_data(multiclass=False):
 
