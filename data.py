@@ -1,3 +1,5 @@
+import sklearn.utils.class_weight
+
 from configuration import *
 
 class IoTDataset(torch.utils.data.Dataset):
@@ -12,6 +14,8 @@ class IoTDataset(torch.utils.data.Dataset):
                  val_size=0.1):
 
         assert split in ['train', 'val', 'test'], 'Invalid split argument'
+
+        self.ordinal_encoder = None             # initialize to save when transforming labels for inverse_transform later
 
         data_path = os.path.join(os.path.dirname(__file__), 'data')
         base_path = os.path.join(data_path, dataset + f'-v{version}')
@@ -33,6 +37,10 @@ class IoTDataset(torch.utils.data.Dataset):
 
         self.graph = graph
         self.num_features = graph.edge_attr.shape[-1]
+        self.classes = np.unique(graph.edge_label)
+        self.class_weights = sklearn.utils.class_weight.compute_class_weight(class_weight='balanced',
+                                                                             classes=self.classes,
+                                                                             y=graph.edge_label.numpy())
 
     def __len__(self):
         return 1
@@ -109,15 +117,14 @@ class IoTDataset(torch.utils.data.Dataset):
             graph_path = f'{base_path}-{split}-{('randomized' if randomize_source_ip else '')}.pt'
             torch.save(graphs[split], graph_path)
 
-    @staticmethod
-    def set_labels(graph, multiclass):
+    def set_labels(self, graph, multiclass):
         # Set the edge labels depending on binary or multiclass classification
 
         if multiclass:
             # Use sklearn for one-hot encoding of the strings to calculate CE-Loss later.
             labels = np.array(graph.Attack).reshape(-1, 1)
-            ordinal_encoder = sk.preprocessing.OrdinalEncoder()
-            ordinal_encoded = ordinal_encoder.fit_transform(labels)
+            self.ordinal_encoder = sk.preprocessing.OrdinalEncoder()
+            ordinal_encoded = self.ordinal_encoder.fit_transform(labels)
 
             graph.edge_label = torch.tensor(ordinal_encoded.squeeze(-1), dtype=torch.long)
 
@@ -137,5 +144,6 @@ class IoTDataset(torch.utils.data.Dataset):
 
 def test():
     test_data = IoTDataset()
+    test_data2 = IoTDataset(multiclass=True)
 
 test()
