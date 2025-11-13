@@ -119,7 +119,7 @@ class IoTDataset(torch.utils.data.Dataset):
             ordinal_encoder = sk.preprocessing.OrdinalEncoder()
             ordinal_encoded = ordinal_encoder.fit_transform(labels)
 
-            pyg_graph.edge_label = torch.tensor(ordinal_encoded.squeeze(-1), dtype=torch.long)
+            graph.edge_label = torch.tensor(ordinal_encoded.squeeze(-1), dtype=torch.long)
 
             # The code below performs one-hot encoding. However, the PyG-train-test-split does not
             # work with one-hot encodings
