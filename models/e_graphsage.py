@@ -1,8 +1,6 @@
 from configuration import *
 from data import IoTDataset
 
-import dgl
-
 class E_GraphSAGE(nn.Module):
 
     def __init__(self, numLayers, dim_node_embed, num_edge_attr, num_classes, dropout=0.2):
@@ -100,3 +98,4 @@ test()
 #   – Maybe do copy.deepcopy() first in forward or ensure this is done in training?
 #   – Otherwise, we modify everything etc.
 #   – Prevent target leakage, do not provide labels!
+#   – Why does v1 of NF-BoT-IoT allow no stratified split?

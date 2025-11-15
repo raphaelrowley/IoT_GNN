@@ -2,6 +2,7 @@ import sklearn.utils.class_weight
 
 from configuration import *
 
+
 class IoTDataset(torch.utils.data.Dataset):
 
     def __init__(self,
@@ -10,14 +11,13 @@ class IoTDataset(torch.utils.data.Dataset):
                  split='train',
                  multiclass=False,
                  randomize_source_ip=True,
-                 test_size=0.2,     # TODO do we want to keep test size and val size fixed?
+                 test_size=0.2,  # TODO do we want to keep test size and val size fixed?
                  val_size=0.1,
-                 data_parent_dir = None):
+                 data_parent_dir=None):
 
         assert split in ['train', 'val', 'test'], 'Invalid split argument'
 
-        self.ordinal_encoder = None             # initialize to save when transforming labels for inverse_transform later
-
+        self.ordinal_encoder = None  # initialize to save when transforming labels for inverse_transform later
 
         # Assume "data" dir is in the same dir as data.py
         data_path = os.path.join(os.path.dirname(__file__), 'data')
@@ -31,7 +31,9 @@ class IoTDataset(torch.utils.data.Dataset):
 
         # Check if preprocessed graph exists, else initialize
         if os.path.exists(graph_path):
-            graph = torch.load(graph_path, weights_only=False)
+            # graph = torch.load(graph_path, weights_only=False)
+            with open(graph_path, "rb") as f:
+                graph = pickle.load(f)
         else:
             csv_path = base_path + '.csv'
             graphs = self.init_graph(csv_path, randomize_source_ip, test_size, val_size)
@@ -61,6 +63,9 @@ class IoTDataset(torch.utils.data.Dataset):
         # Remove duplicates
         df.drop_duplicates(inplace=True)
 
+        # Remove NaNs
+        df = df.dropna()
+
         # Random mapping of IP addresses
         if randomize_source_ip:
             lower = int(ipaddress.IPv4Address('172.16.0.1'))
@@ -85,6 +90,10 @@ class IoTDataset(torch.utils.data.Dataset):
         numeric_data_normalized = scaler.transform(numeric_data)
         df[numeric_cols] = numeric_data_normalized
 
+        # Summarize Edge Attributes
+        df['edge_attr'] = df[numeric_cols].apply(lambda row: torch.tensor(row.values), axis=1)
+        df.drop(columns=numeric_cols, inplace=True)
+
         # Split the data into train, test and validation datasets.
         try:
             # Use a stratified split to ensure attack types and benign traffic are represented equally
@@ -104,15 +113,8 @@ class IoTDataset(torch.utils.data.Dataset):
             g = nx.from_pandas_edgelist(df, source='IPV4_SRC_ADDR', target='IPV4_DST_ADDR', edge_attr=True,
                                         create_using=nx.DiGraph())
 
-            # Convert to PyG, group numerical features as edge attributes.
-            # These attributes are the ones that we can later pass to the GNN for learning.
-            pyg_graph = torch_geometric.utils.convert.from_networkx(g, group_edge_attrs=numeric_cols.tolist())
-
-            # Add all-one-vectors as "dummy" node attributes
-            # E-Graphsage-paper: "[…] dimension of all one constant vector is the same as the number of edge features."
-            pyg_graph.node_attr = torch.ones(pyg_graph.num_nodes, pyg_graph.edge_attr.shape[-1])
-
-            graphs[splits[i]] = pyg_graph
+            # graphs[splits[i]] = pyg_graph
+            graphs[splits[i]] = g
 
         return graphs
 
@@ -120,32 +122,49 @@ class IoTDataset(torch.utils.data.Dataset):
     def save_graphs(base_path, randomize_source_ip, graphs):
         splits = ['train', 'val', 'test']
         for split in splits:
-            graph_path = f'{base_path}-{split}{("-randomized" if randomize_source_ip else "")}.pt'
+            graph_path = f'{base_path}-{split}{("-randomized" if randomize_source_ip else "")}.pkl'
             torch.save(graphs[split], graph_path)
+            with open(graph_path, "wb") as f:
+                pickle.dump(graphs[split], f)
 
     def set_labels(self, graph, multiclass):
         # Set the edge labels depending on binary or multiclass classification
-
         if multiclass:
             # Use sklearn for one-hot encoding of the strings to calculate CE-Loss later.
-            labels = np.array(graph.Attack).reshape(-1, 1)
-            self.ordinal_encoder = sk.preprocessing.OrdinalEncoder()
-            ordinal_encoded = self.ordinal_encoder.fit_transform(labels)
-
-            graph.edge_label = torch.tensor(ordinal_encoded.squeeze(-1), dtype=torch.long)
+            # labels = np.array(graph.Attack).reshape(-1, 1)
+            # self.ordinal_encoder = sk.preprocessing.OrdinalEncoder()
+            # ordinal_encoded = self.ordinal_encoder.fit_transform(labels)
+            #
+            # graph.edge_label = torch.tensor(ordinal_encoded.squeeze(-1), dtype=torch.long)
 
             # The code below performs one-hot encoding. However, the PyG-train-test-split does not
             # work with one-hot encodings
-            # labels = np.array(pyg_graph.Attack).reshape(-1, 1)
-            # one_hot_encoder = sk.preprocessing.OneHotEncoder()
-            # one_hot_encoded = one_hot_encoder.fit_transform(labels).toarray()
-            #
-            # pyg_graph.edge_label = one_hot_encoded
+            labels = np.array(pyg_graph.Attack).reshape(-1, 1)
+            one_hot_encoder = sk.preprocessing.OneHotEncoder()
+            one_hot_encoded = one_hot_encoder.fit_transform(labels).toarray()
+
+            pyg_graph.edge_label = one_hot_encoded
         else:
             graph.edge_label = graph.Label
 
         del graph.Label, graph.Attack
         return graph
+
+    def convert_to_dgl(self, g):
+
+        dgl_graph = dgl.from_networkx(g, edge_attrs=['edge_attr', 'edge_label'])
+        dgl_graph.apply_edges(lambda edges:
+                              {'edge_attr': torch.stack([edges.data[col] for col in numeric_cols], dim=-1)}
+                              )
+        for col in numeric_cols:
+            del dgl_graph.edata[col]
+        dgl_graph.edata['Attack'] = g.edges
+
+        # Add all-one-vectors as "dummy" node attributes
+        # E-Graphsage-paper: "[…] dimension of all one constant vector is the same as the number of edge features."
+        # pyg_graph.node_attr = torch.ones(pyg_graph.num_nodes, pyg_graph.edge_attr.shape[-1])
+        print(dgl_graph)
+        dgl_graph.ndata['node_attr'] = torch.ones(dgl_graph.num_nodes(), dgl_graph.edata['edge_attr'].shape[-1])
 
 
 def test():
