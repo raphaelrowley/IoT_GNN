@@ -11,13 +11,19 @@ class IoTDataset(torch.utils.data.Dataset):
                  multiclass=False,
                  randomize_source_ip=True,
                  test_size=0.2,     # TODO do we want to keep test size and val size fixed?
-                 val_size=0.1):
+                 val_size=0.1,
+                 data_parent_dir = None):
 
         assert split in ['train', 'val', 'test'], 'Invalid split argument'
 
         self.ordinal_encoder = None             # initialize to save when transforming labels for inverse_transform later
 
+
+        # Assume "data" dir is in the same dir as data.py
         data_path = os.path.join(os.path.dirname(__file__), 'data')
+        # Can also specify another location.
+        if data_parent_dir is not None:
+            data_path = os.path.join(os.path.dirname(__file__), 'data')
         base_path = os.path.join(data_path, dataset + f'-v{version}')
 
         graph_path = f'{base_path}-{split}-{('randomized' if randomize_source_ip else '')}.pt'
