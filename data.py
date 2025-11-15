@@ -23,7 +23,7 @@ class IoTDataset(torch.utils.data.Dataset):
         data_path = os.path.join(os.path.dirname(__file__), 'data')
         # Can also specify another location.
         if data_parent_dir is not None:
-            data_path = os.path.join(os.path.dirname(__file__), 'data')
+            data_path = os.path.join(data_parent_dir, 'data')
         base_path = os.path.join(data_path, dataset + f'-v{version}')
 
         graph_path = f'{base_path}-{split}-{('randomized' if randomize_source_ip else '')}.pt'
