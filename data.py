@@ -26,7 +26,7 @@ class IoTDataset(torch.utils.data.Dataset):
             data_path = os.path.join(data_parent_dir, 'data')
         base_path = os.path.join(data_path, dataset + f'-v{version}')
 
-        graph_path = f'{base_path}-{split}-{('randomized' if randomize_source_ip else '')}.pt'
+        graph_path = f'{base_path}-{split}-{("randomized" if randomize_source_ip else "")}.pt'
         graph = None
 
         # Check if preprocessed graph exists, else initialize
@@ -120,7 +120,7 @@ class IoTDataset(torch.utils.data.Dataset):
     def save_graphs(base_path, randomize_source_ip, graphs):
         splits = ['train', 'val', 'test']
         for split in splits:
-            graph_path = f'{base_path}-{split}-{('randomized' if randomize_source_ip else '')}.pt'
+            graph_path = f'{base_path}-{split}-{("randomized" if randomize_source_ip else "")}.pt'
             torch.save(graphs[split], graph_path)
 
     def set_labels(self, graph, multiclass):
@@ -154,4 +154,5 @@ def test():
 
 
 if __name__ == "__main__":
-    test()
+    #test()
+    test_data = IoTDataset(version=1)
