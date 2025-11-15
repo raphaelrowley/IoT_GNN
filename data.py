@@ -6,7 +6,7 @@ class IoTDataset(torch.utils.data.Dataset):
 
     def __init__(self,
                  dataset='NF-BoT-IoT',
-                 version=2,         # TODO change to v1 later
+                 version=1,
                  split='train',
                  multiclass=False,
                  randomize_source_ip=True,
