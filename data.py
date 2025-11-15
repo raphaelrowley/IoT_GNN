@@ -146,4 +146,6 @@ def test():
     test_data = IoTDataset()
     test_data2 = IoTDataset(multiclass=True)
 
-test()
+
+if __name__ == "__main__":
+    test()
