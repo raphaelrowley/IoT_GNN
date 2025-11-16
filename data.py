@@ -17,7 +17,7 @@ class IoTDataset(torch.utils.data.Dataset):
 
         assert split in ['train', 'val', 'test'], 'Invalid split argument'
 
-        self.ordinal_encoder = None  # initialize to save when transforming labels for inverse_transform later
+        self.encoder = None  # initialize to save when transforming labels for inverse_transform later
 
         # Assume "data" dir is in the same dir as data.py
         data_path = os.path.join(os.path.dirname(__file__), 'data')
@@ -26,29 +26,29 @@ class IoTDataset(torch.utils.data.Dataset):
             data_path = os.path.join(data_parent_dir, 'data')
         base_path = os.path.join(data_path, dataset + f'-v{version}')
 
-        graph_path = f'{base_path}-{split}{("-randomized" if randomize_source_ip else "")}.pt'
-        graph = None
+        df_path = f'{base_path}-{split}{("-randomized" if randomize_source_ip else "")}.pkl'
+        df = None
 
         # Check if preprocessed graph exists, else initialize
-        if os.path.exists(graph_path):
-            # graph = torch.load(graph_path, weights_only=False)
-            with open(graph_path, "rb") as f:
-                graph = pickle.load(f)
+        if os.path.exists(df_path):
+            df = pd.read_pickle(df_path)
         else:
             csv_path = base_path + '.csv'
-            graphs = self.init_graph(csv_path, randomize_source_ip, test_size, val_size)
-            self.save_graphs(base_path, randomize_source_ip, graphs)
-            graph = graphs[split]
+            dfs = self.preprocess_data(csv_path, randomize_source_ip, test_size, val_size)
+            self.save_dataframes(base_path, randomize_source_ip, dfs)
+            df = dfs[split]
 
         # Set the required labels
-        self.set_labels(graph, multiclass=multiclass)
+        self.set_labels(df, multiclass=multiclass)
 
-        self.graph = graph
-        self.num_features = graph.edge_attr.shape[-1]
-        self.classes = np.unique(graph.edge_label)
+        # Init Graph
+        self.graph = self.convert_to_dgl(df)
+
+        self.num_features = self.graph.edata['edge_attr'].shape[-1]
+        self.classes = np.unique(df['edge_label'].values)
         self.class_weights = sklearn.utils.class_weight.compute_class_weight(class_weight='balanced',
                                                                              classes=self.classes,
-                                                                             y=graph.edge_label.numpy())
+                                                                             y=df['edge_label'].values)
 
     def __len__(self):
         return 1
@@ -57,7 +57,7 @@ class IoTDataset(torch.utils.data.Dataset):
         return self.graph
 
     @staticmethod
-    def init_graph(csv_path, randomize_source_ip, test_size, val_size):
+    def preprocess_data(csv_path, randomize_source_ip, test_size, val_size):
         df = pd.read_csv(csv_path)
 
         # Remove duplicates
@@ -86,12 +86,12 @@ class IoTDataset(torch.utils.data.Dataset):
 
         # Normalize the previously extracted numerical data
         numeric_data = df[numeric_cols]
-        scaler = sk.preprocessing.StandardScaler().fit(numeric_data)        # Could be easily exchanged for another sklearn scaler
+        scaler = sk.preprocessing.StandardScaler().fit(numeric_data)    # Could be easily exchanged for another sklearn scaler
         numeric_data_normalized = scaler.transform(numeric_data)
         df[numeric_cols] = numeric_data_normalized
 
         # Summarize Edge Attributes
-        df['edge_attr'] = df[numeric_cols].apply(lambda row: torch.tensor(row.values), axis=1)
+        df['edge_attr'] = df[numeric_cols].apply(lambda row: torch.tensor(row.values, dtype=torch.float32), axis=1)
         df.drop(columns=numeric_cols, inplace=True)
 
         # Split the data into train, test and validation datasets.
@@ -106,65 +106,48 @@ class IoTDataset(torch.utils.data.Dataset):
             train_df, test_df = sk.model_selection.train_test_split(df, test_size=test_size + val_size, shuffle=True)
             test_df, val_df = sk.model_selection.train_test_split(test_df, test_size=val_size / (test_size + val_size))
 
-        graphs = {}
+        dfs = {}
         splits = ['train', 'val', 'test']
         for i, df in enumerate([train_df, val_df, test_df]):
-            # Create Networkx graphs
-            g = nx.from_pandas_edgelist(df, source='IPV4_SRC_ADDR', target='IPV4_DST_ADDR', edge_attr=True,
-                                        create_using=nx.DiGraph())
+            dfs[splits[i]] = df
 
-            # graphs[splits[i]] = pyg_graph
-            graphs[splits[i]] = g
-
-        return graphs
+        return dfs
 
     @staticmethod
-    def save_graphs(base_path, randomize_source_ip, graphs):
+    def save_dataframes(base_path, randomize_source_ip, dfs):
         splits = ['train', 'val', 'test']
         for split in splits:
-            graph_path = f'{base_path}-{split}{("-randomized" if randomize_source_ip else "")}.pkl'
-            torch.save(graphs[split], graph_path)
-            with open(graph_path, "wb") as f:
-                pickle.dump(graphs[split], f)
+            df_path = f'{base_path}-{split}{("-randomized" if randomize_source_ip else "")}.pkl'
+            dfs[split].to_pickle(df_path)
 
-    def set_labels(self, graph, multiclass):
+    def set_labels(self, df, multiclass):
         # Set the edge labels depending on binary or multiclass classification
         if multiclass:
-            # Use sklearn for one-hot encoding of the strings to calculate CE-Loss later.
-            # labels = np.array(graph.Attack).reshape(-1, 1)
-            # self.ordinal_encoder = sk.preprocessing.OrdinalEncoder()
-            # ordinal_encoded = self.ordinal_encoder.fit_transform(labels)
-            #
-            # graph.edge_label = torch.tensor(ordinal_encoded.squeeze(-1), dtype=torch.long)
+            # Use sklearn for encoding of the strings to calculate CE-Loss later
+            labels = df['Attack'].values
+            # self.encoder = sk.preprocessing.OneHotEncoder()
+            self.encoder = sk.preprocessing.LabelEncoder()
+            encoded_label = self.encoder.fit_transform(labels)
 
-            # The code below performs one-hot encoding. However, the PyG-train-test-split does not
-            # work with one-hot encodings
-            labels = np.array(pyg_graph.Attack).reshape(-1, 1)
-            one_hot_encoder = sk.preprocessing.OneHotEncoder()
-            one_hot_encoded = one_hot_encoder.fit_transform(labels).toarray()
-
-            pyg_graph.edge_label = one_hot_encoded
+            df['edge_label'] = encoded_label
         else:
-            graph.edge_label = graph.Label
+            df['edge_label'] = df['Label']
 
-        del graph.Label, graph.Attack
-        return graph
+        df.drop(columns=['Label', 'Attack'], inplace=True)
+        return
 
-    def convert_to_dgl(self, g):
+    def convert_to_dgl(self, df):
+        # Create Networkx graph
+        g = nx.from_pandas_edgelist(df, source='IPV4_SRC_ADDR', target='IPV4_DST_ADDR', edge_attr=True,
+                                    create_using=nx.DiGraph())
 
         dgl_graph = dgl.from_networkx(g, edge_attrs=['edge_attr', 'edge_label'])
-        dgl_graph.apply_edges(lambda edges:
-                              {'edge_attr': torch.stack([edges.data[col] for col in numeric_cols], dim=-1)}
-                              )
-        for col in numeric_cols:
-            del dgl_graph.edata[col]
-        dgl_graph.edata['Attack'] = g.edges
 
         # Add all-one-vectors as "dummy" node attributes
         # E-Graphsage-paper: "[…] dimension of all one constant vector is the same as the number of edge features."
-        # pyg_graph.node_attr = torch.ones(pyg_graph.num_nodes, pyg_graph.edge_attr.shape[-1])
-        print(dgl_graph)
         dgl_graph.ndata['node_attr'] = torch.ones(dgl_graph.num_nodes(), dgl_graph.edata['edge_attr'].shape[-1])
+
+        return dgl_graph
 
 
 def test():

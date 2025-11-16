@@ -73,23 +73,16 @@ class E_GraphSAGE_Layer(nn.Module):
 
 
 def test():
-    train_data = IoTDataset(version=1)
-    pyg_graph = train_data[0]
-    nx_graph = torch_geometric.utils.to_networkx(
-        pyg_graph,
-        to_undirected=False,
-        node_attrs=["node_attr"],
-        edge_attrs=["edge_attr", "edge_label"]
-    )
-    dgl_graph = dgl.from_networkx(
-        nx_graph,
-        node_attrs=["node_attr"],
-        edge_attrs=["edge_attr", "edge_label"]
-    )
-    print(dgl_graph)
+    # train_data = IoTDataset(version=1)
+    train_data = IoTDataset(version=1, multiclass=True)
+    # train_data = IoTDataset(version=1, multiclass=True, split='test')
+    # train_data = IoTDataset(version=1, multiclass=True, split='val')
+    dgl_graph = train_data[0]
 
     temp = E_GraphSAGE(numLayers=2, num_edge_attr=8, dim_node_embed=128, num_classes=5)
     temp.forward(dgl_graph)
+
+    print(dgl_graph)
 
 test()
 
@@ -98,4 +91,5 @@ test()
 #   – Maybe do copy.deepcopy() first in forward or ensure this is done in training?
 #   – Otherwise, we modify everything etc.
 #   – Prevent target leakage, do not provide labels!
-#   – Why does v1 of NF-BoT-IoT allow no stratified split?
+#   – Differentiate between training and testing for both multiclass and binary classification
+#   – Check torch CELoss again to see if we need to apply softmax during training or provide unnormalized outputs
