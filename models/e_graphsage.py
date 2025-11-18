@@ -84,8 +84,9 @@ def test():
 
     print(dgl_graph)
 
-test()
-
+# Test should only be called if we actually call the file, not import the module.
+if __name__ == "__main__":
+    test()
 
 # TODO
 #   – Maybe do copy.deepcopy() first in forward or ensure this is done in training?
