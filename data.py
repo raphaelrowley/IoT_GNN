@@ -50,6 +50,8 @@ class IoTDataset(torch.utils.data.Dataset):
                                                                              classes=self.classes,
                                                                              y=df['edge_label'].values)
 
+        self.id = dataset + f'-v{version}{("-randomized" if randomize_source_ip else "")}{"-multiclass" if len(self.classes) > 2 else ""}'
+
     def __len__(self):
         return 1
 
@@ -148,12 +150,3 @@ class IoTDataset(torch.utils.data.Dataset):
         dgl_graph.ndata['node_attr'] = torch.ones(dgl_graph.num_nodes(), dgl_graph.edata['edge_attr'].shape[-1])
 
         return dgl_graph
-
-
-def test():
-    test_data = IoTDataset()
-    test_data2 = IoTDataset(multiclass=True)
-
-
-if __name__ == "__main__":
-    test()

@@ -29,8 +29,10 @@ class E_GraphSAGE(nn.Module):
         self.mlp = nn.Sequential(
             nn.Linear(2*dim_node_embed, dim_output),
         )
-        if dim_output > 1:
-            self.mlp.append(nn.Softmax(dim=-1))
+        # if dim_output > 1:    # TODO do this cleanly
+        #     self.mlp.append(nn.Softmax(dim=-1))
+
+        self.id = f'E_GraphSAGE_K{numLayers}'
 
     def forward(self, graph):
         graph = self.graphsage(graph)
@@ -71,22 +73,6 @@ class E_GraphSAGE_Layer(nn.Module):
 
         return graph
 
-
-def test():
-    # train_data = IoTDataset(version=1)
-    train_data = IoTDataset(version=1, multiclass=True)
-    # train_data = IoTDataset(version=1, multiclass=True, split='test')
-    # train_data = IoTDataset(version=1, multiclass=True, split='val')
-    dgl_graph = train_data[0]
-
-    temp = E_GraphSAGE(numLayers=2, num_edge_attr=8, dim_node_embed=128, num_classes=5)
-    temp.forward(dgl_graph)
-
-    print(dgl_graph)
-
-# Test should only be called if we actually call the file, not import the module.
-if __name__ == "__main__":
-    test()
 
 # TODO
 #   – Maybe do copy.deepcopy() first in forward or ensure this is done in training?
