@@ -1,4 +1,5 @@
 import sklearn.utils.class_weight
+import torch
 
 from configuration import *
 
@@ -43,6 +44,9 @@ class IoTDataset(torch.utils.data.Dataset):
 
         # Init Graph
         self.graph = self.convert_to_dgl(df)
+
+        if not multiclass:
+            self.graph.edata['edge_label'] = self.graph.edata['edge_label'].unsqueeze(-1).to(torch.float32)
 
         self.num_features = self.graph.edata['edge_attr'].shape[-1]
         self.classes = np.unique(df['edge_label'].values)
