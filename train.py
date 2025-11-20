@@ -153,6 +153,7 @@ class ModelTrainer:
         plt.xlabel('Epoch')
         plt.ylabel('Risk')
         plt.savefig(self.checkpoint_path.replace('.pt', '_risk.png'), dpi=300)
+        plt.close()
 
         plt.figure('Classification Results')
         prec = progress_reports['weighted avg']['precision'] if len(self.val_data.classes) > 2 else progress_reports['precision']
@@ -164,6 +165,7 @@ class ModelTrainer:
         plt.legend()
         plt.xlabel('Epoch')
         plt.savefig(self.checkpoint_path.replace('.pt', '_classification.png'), dpi=300)
+        plt.close()
 
 
     def load_checkpoint(self, model):
