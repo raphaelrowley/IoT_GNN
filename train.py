@@ -9,7 +9,7 @@ from tqdm import trange
 
 class ModelTrainer:
 
-    def __init__(self, training_config, train_data, test_data):
+    def __init__(self, training_config, train_data, val_data):
 
         self.num_epochs = training_config['num_epochs']
         self.lr = training_config['lr']
@@ -18,14 +18,14 @@ class ModelTrainer:
         self.lr_sched_patience = training_config['lr_sched_patience']
 
         self.train_data = train_data
-        self.test_data = test_data
+        self.val_data = val_data
 
         if training_config['gpu']:
             self.use_gpu = True
             self.device = torch.device('cuda')
 
             self.train_data.graph = self.train_data.graph.to(self.device)
-            self.test_data.graph = self.test_data.graph.to(self.device)
+            self.val_data.graph = self.val_data.graph.to(self.device)
         else:
             self.use_gpu = False
             self.device = torch.device('cpu')
@@ -62,16 +62,16 @@ class ModelTrainer:
 
         self.checkpoint_path = self.checkpoint_base_path + model.id + '.pt'
         if os.path.isfile(self.checkpoint_path):
-            epoch, train_risk, test_risk, progress_reports = self.load_checkpoint(model)
+            epoch, train_risk, val_risk, progress_reports = self.load_checkpoint(model)
         else:
             epoch = 0
 
             train_risk = []
-            test_risk = []
-            if len(self.test_data.classes) > 2:
+            val_risk = []
+            if len(self.val_data.classes) > 2:
                 # multiclass_classification
                 progress_reports = {}
-                for cls in self.test_data.encoder.inverse_transform(self.test_data.classes):
+                for cls in self.val_data.encoder.inverse_transform(self.val_data.classes):
                     progress_reports[cls] = {}
                     progress_reports[cls]['precision'] = []
                     progress_reports[cls]['recall'] = []
@@ -109,26 +109,26 @@ class ModelTrainer:
 
                 model.eval()
                 with torch.no_grad():
-                    test_graph = copy.deepcopy(self.test_data.__getitem__(0))
-                    del test_graph.edata['edge_label']  # prevent target leakage
-                    model.forward(test_graph)
-                    logits = test_graph.edata['edge_pred']
+                    val_graph = copy.deepcopy(self.val_data.__getitem__(0))
+                    del val_graph.edata['edge_label']  # prevent target leakage
+                    model.forward(val_graph)
+                    logits = val_graph.edata['edge_pred']
 
-                    del test_graph      # Maybe unnecessary, but free up memory ASAP for large datasets
+                    del val_graph      # Maybe unnecessary, but free up memory ASAP for large datasets
 
-                    # Compute test loss (using the same weights as in training data set;
+                    # Compute validation loss (using the same weights as in training data set;
                     # negligible difference due to stratified split)
-                    target = self.test_data.__getitem__(0).edata['edge_label']
-                    test_loss = self.loss_fn(logits, target)
-                    test_risk.append(test_loss)
+                    target = self.val_data.__getitem__(0).edata['edge_label']
+                    val_loss = self.loss_fn(logits, target)
+                    val_risk.append(val_loss)
 
-                    self.lr_scheduler.step(test_loss)
+                    self.lr_scheduler.step(val_loss)
 
-                    if len(self.test_data.classes) > 2:
+                    if len(self.val_data.classes) > 2:
                         y_pred = torch.argmax(logits, dim=-1)
                         cls_report = sk.metrics.classification_report(y_true=target, y_pred=y_pred,
-                                                                      labels=self.test_data.classes,
-                                                                      target_names=self.test_data.encoder.inverse_transform(self.test_data.classes),
+                                                                      labels=self.val_data.classes,
+                                                                      target_names=self.val_data.encoder.inverse_transform(self.val_data.classes),
                                                                       output_dict=True, zero_division=0.0)
                         for key in progress_reports.keys():
                             progress_reports[key]['precision'].append(cls_report[key]['precision'])
@@ -143,27 +143,27 @@ class ModelTrainer:
 
 
                 train_risk.append(loss.item())
-                f1 = progress_reports['weighted avg']['f1-score'][-1] if len(self.test_data.classes) > 2 else progress_reports['f1-score'][-1]
+                f1 = progress_reports['weighted avg']['f1-score'][-1] if len(self.val_data.classes) > 2 else progress_reports['f1-score'][-1]
                 pbar.set_postfix({
                     "train loss": f'{train_risk[-1]:.4f}', #f"{loss:.4f}",
-                    "test loss": f'{test_risk[-1]:.4f}',
+                    "validation loss": f'{val_risk[-1]:.4f}',
                     "learning rate": f'{self.optimizer.param_groups[0]["lr"]:.2e}',
                     "F1 score": f'{f1:.5f}'
                 })
-                self.set_checkpoint(epoch, model, train_risk, test_risk, progress_reports)
+                self.set_checkpoint(epoch, model, train_risk, val_risk, progress_reports)
 
         plt.figure('Risk')
         plt.plot([i + 1 for i in range(self.num_epochs)], train_risk, label='train')
-        plt.plot([i + 1 for i in range(self.num_epochs)], test_risk, label='test')
+        plt.plot([i + 1 for i in range(self.num_epochs)], val_risk, label='validation')
         plt.legend()
         plt.xlabel('Epoch')
         plt.ylabel('Risk')
         plt.savefig(self.checkpoint_path.replace('.pt', '_risk.png'), dpi=300)
 
         plt.figure('Classification Results')
-        prec = progress_reports['weighted avg']['precision'] if len(self.test_data.classes) > 2 else progress_reports['precision']
-        recall = progress_reports['weighted avg']['recall'] if len(self.test_data.classes) > 2 else progress_reports['recall']
-        f1 = progress_reports['weighted avg']['f1-score'] if len(self.test_data.classes) > 2 else progress_reports['f1-score']
+        prec = progress_reports['weighted avg']['precision'] if len(self.val_data.classes) > 2 else progress_reports['precision']
+        recall = progress_reports['weighted avg']['recall'] if len(self.val_data.classes) > 2 else progress_reports['recall']
+        f1 = progress_reports['weighted avg']['f1-score'] if len(self.val_data.classes) > 2 else progress_reports['f1-score']
         plt.plot([i + 1 for i in range(self.num_epochs)], prec, label='Precision')
         plt.plot([i + 1 for i in range(self.num_epochs)], recall, label='Recall')
         plt.plot([i + 1 for i in range(self.num_epochs)], f1, label='F1 Score')
@@ -173,7 +173,7 @@ class ModelTrainer:
 
 
     def load_checkpoint(self, model):
-        (epoch, train_risk, test_risk, progress_reports,
+        (epoch, train_risk, val_risk, progress_reports,
          rng_state, _ ,optim_sd, lr_sched_sd) = torch.load(self.checkpoint_path, weights_only=False)
 
         torch.set_rng_state(rng_state)
@@ -187,11 +187,11 @@ class ModelTrainer:
 
         epoch += 1
 
-        return epoch, train_risk, test_risk, progress_reports
+        return epoch, train_risk, val_risk, progress_reports
 
 
-    def set_checkpoint(self, epoch, model, train_risk, test_risk, progress_reports):
-        torch.save([epoch, train_risk, test_risk, progress_reports,
+    def set_checkpoint(self, epoch, model, train_risk, val_risk, progress_reports):
+        torch.save([epoch, train_risk, val_risk, progress_reports,
                     torch.get_rng_state(), model.state_dict(), self.optimizer.state_dict(),
                     self.lr_scheduler.state_dict()],
                    self.checkpoint_path)
@@ -202,10 +202,10 @@ def test():
     from models import e_graphsage
     from data import IoTDataset
 
-    multiclass = True
+    multiclass = False
     print('\rLoading and preprocessing data…', end='')
     train_data = IoTDataset(version=1, multiclass=multiclass)
-    test_data = IoTDataset(version=1, multiclass=multiclass, split='test')
+    val_data = IoTDataset(version=1, multiclass=multiclass, split='val')
 
     print('\rInitializing model…', end='')
     model = e_graphsage.E_GraphSAGE(numLayers=2,
@@ -223,7 +223,7 @@ def test():
     }
 
     print('\rStarting training…', end='')
-    trainer = ModelTrainer(training_config, train_data, test_data)
+    trainer = ModelTrainer(training_config, train_data, val_data)
 
     trainer.train_model(model)
 
