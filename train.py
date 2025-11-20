@@ -124,7 +124,6 @@ class ModelTrainer:
 
                     self.lr_scheduler.step(test_loss)
 
-                    # TODO Define a good accuracy score to use in testing, maybe a class-weighted F1?
                     if len(self.test_data.classes) > 2:
                         y_pred = torch.argmax(logits, dim=-1)
                         cls_report = sk.metrics.classification_report(y_true=target, y_pred=y_pred,
@@ -160,6 +159,17 @@ class ModelTrainer:
         plt.xlabel('Epoch')
         plt.ylabel('Risk')
         plt.savefig(self.checkpoint_path.replace('.pt', '_risk.png'), dpi=300)
+
+        plt.figure('Classification Results')
+        prec = progress_reports['weighted avg']['precision'] if len(self.test_data.classes) > 2 else progress_reports['precision']
+        recall = progress_reports['weighted avg']['recall'] if len(self.test_data.classes) > 2 else progress_reports['recall']
+        f1 = progress_reports['weighted avg']['f1-score'] if len(self.test_data.classes) > 2 else progress_reports['f1-score']
+        plt.plot([i + 1 for i in range(self.num_epochs)], prec, label='Precision')
+        plt.plot([i + 1 for i in range(self.num_epochs)], recall, label='Recall')
+        plt.plot([i + 1 for i in range(self.num_epochs)], f1, label='F1 Score')
+        plt.legend()
+        plt.xlabel('Epoch')
+        plt.savefig(self.checkpoint_path.replace('.pt', '_classification.png'), dpi=300)
 
 
     def load_checkpoint(self, model):
@@ -205,7 +215,7 @@ def test():
                                     )
 
     training_config = {
-        'num_epochs': 20,
+        'num_epochs': 100,
         'lr': 1e-3,
         'gpu': False,
         'lr_sched_factor': np.sqrt(10),
