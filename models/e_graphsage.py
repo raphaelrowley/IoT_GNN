@@ -1,5 +1,4 @@
 from configuration import *
-from data import IoTDataset
 
 class E_GraphSAGE(nn.Module):
 
@@ -29,8 +28,6 @@ class E_GraphSAGE(nn.Module):
         self.mlp = nn.Sequential(
             nn.Linear(2*dim_node_embed, dim_output),
         )
-        # if dim_output > 1:    # TODO do this cleanly
-        #     self.mlp.append(nn.Softmax(dim=-1))
 
         self.id = f'E_GraphSAGE_K{numLayers}'
 
@@ -72,11 +69,3 @@ class E_GraphSAGE_Layer(nn.Module):
         del graph.ndata['h_Nv']
 
         return graph
-
-
-# TODO
-#   – Maybe do copy.deepcopy() first in forward or ensure this is done in training?
-#   – Otherwise, we modify everything etc.
-#   – Prevent target leakage, do not provide labels!
-#   – Differentiate between training and testing for both multiclass and binary classification
-#   – Check torch CELoss again to see if we need to apply softmax during training or provide unnormalized outputs
