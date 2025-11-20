@@ -1,5 +1,8 @@
 import copy
 
+import matplotlib.pyplot as plt
+import sklearn.metrics
+
 from configuration import *
 from tqdm import trange
 
@@ -59,13 +62,29 @@ class ModelTrainer:
 
         self.checkpoint_path = self.checkpoint_base_path + model.id + '.pt'
         if os.path.isfile(self.checkpoint_path):
-            epoch, train_risk, test_risk, test_accuracy = self.load_checkpoint(model)
+            epoch, train_risk, test_risk, progress_reports = self.load_checkpoint(model)
         else:
             epoch = 0
 
             train_risk = []
             test_risk = []
-            test_accuracy = []
+            if len(self.test_data.classes) > 2:
+                # multiclass_classification
+                progress_reports = {}
+                for cls in self.test_data.encoder.inverse_transform(self.test_data.classes):
+                    progress_reports[cls] = {}
+                    progress_reports[cls]['precision'] = []
+                    progress_reports[cls]['recall'] = []
+                    progress_reports[cls]['f1-score'] = []
+                progress_reports['weighted avg'] = {}
+                progress_reports['weighted avg']['precision'] = []
+                progress_reports['weighted avg']['recall'] = []
+                progress_reports['weighted avg']['f1-score'] = []
+            else:
+                progress_reports = {}
+                progress_reports['precision'] = []
+                progress_reports['recall'] = []
+                progress_reports['f1-score'] = []
 
         with trange(epoch, self.num_epochs, initial=epoch, total=self.num_epochs,
                     desc=f'Training {model.id}', unit='epoch') as pbar:
@@ -106,25 +125,45 @@ class ModelTrainer:
                     self.lr_scheduler.step(test_loss)
 
                     # TODO Define a good accuracy score to use in testing, maybe a class-weighted F1?
+                    if len(self.test_data.classes) > 2:
+                        y_pred = torch.argmax(logits, dim=-1)
+                        cls_report = sk.metrics.classification_report(y_true=target, y_pred=y_pred,
+                                                                      labels=self.test_data.classes,
+                                                                      target_names=self.test_data.encoder.inverse_transform(self.test_data.classes),
+                                                                      output_dict=True, zero_division=0.0)
+                        for key in progress_reports.keys():
+                            progress_reports[key]['precision'].append(cls_report[key]['precision'])
+                            progress_reports[key]['recall'].append(cls_report[key]['recall'])
+                            progress_reports[key]['f1-score'].append(cls_report[key]['f1-score'])
+                    else:
+                        y_pred = 0.5 * (1+torch.sgn(logits))
+                        cls_report = sk.metrics.classification_report(y_true=target, y_pred=y_pred, output_dict=True, zero_division=0.0)
+                        progress_reports['precision'].append(cls_report['1.0']['precision'])
+                        progress_reports['recall'].append(cls_report['1.0']['recall'])
+                        progress_reports['f1-score'].append(cls_report['1.0']['f1-score'])
+
 
                 train_risk.append(loss.item())
+                f1 = progress_reports['weighted avg']['f1-score'][-1] if len(self.test_data.classes) > 2 else progress_reports['f1-score'][-1]
                 pbar.set_postfix({
                     "train loss": f'{train_risk[-1]:.4f}', #f"{loss:.4f}",
                     "test loss": f'{test_risk[-1]:.4f}',
                     "learning rate": f'{self.optimizer.param_groups[0]["lr"]:.2e}',
+                    "F1 score": f'{f1:.5f}'
                 })
-                self.set_checkpoint(epoch, model, train_risk, test_risk, test_accuracy)
+                self.set_checkpoint(epoch, model, train_risk, test_risk, progress_reports)
 
+        plt.figure('Risk')
         plt.plot([i + 1 for i in range(self.num_epochs)], train_risk, label='train')
         plt.plot([i + 1 for i in range(self.num_epochs)], test_risk, label='test')
         plt.legend()
         plt.xlabel('Epoch')
         plt.ylabel('Risk')
-        plt.show()
+        plt.savefig(self.checkpoint_path.replace('.pt', '_risk.png'), dpi=300)
 
 
     def load_checkpoint(self, model):
-        (epoch, train_risk, test_risk, test_accuracy,
+        (epoch, train_risk, test_risk, progress_reports,
          rng_state, _ ,optim_sd, lr_sched_sd) = torch.load(self.checkpoint_path, weights_only=False)
 
         torch.set_rng_state(rng_state)
@@ -138,11 +177,11 @@ class ModelTrainer:
 
         epoch += 1
 
-        return epoch, train_risk, test_risk, test_accuracy
+        return epoch, train_risk, test_risk, progress_reports
 
 
-    def set_checkpoint(self, epoch, model, train_risk, test_risk, test_accuracy):
-        torch.save([epoch, train_risk, test_risk, test_accuracy,
+    def set_checkpoint(self, epoch, model, train_risk, test_risk, progress_reports):
+        torch.save([epoch, train_risk, test_risk, progress_reports,
                     torch.get_rng_state(), model.state_dict(), self.optimizer.state_dict(),
                     self.lr_scheduler.state_dict()],
                    self.checkpoint_path)
@@ -166,7 +205,7 @@ def test():
                                     )
 
     training_config = {
-        'num_epochs': 200,
+        'num_epochs': 20,
         'lr': 1e-3,
         'gpu': False,
         'lr_sched_factor': np.sqrt(10),
