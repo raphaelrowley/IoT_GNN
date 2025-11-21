@@ -43,7 +43,7 @@ class ModelTrainer:
         self.checkpoint_path = None
 
 
-    def train_model(self, model):
+    def train_model(self, model, use_checkpoint):
         if self.use_gpu:
             model = model.to(self.device)
 
@@ -55,7 +55,7 @@ class ModelTrainer:
         )
 
         self.checkpoint_path = self.checkpoint_base_path + model.id + '.pt'
-        if os.path.isfile(self.checkpoint_path):
+        if os.path.isfile(self.checkpoint_path) and use_checkpoint:
             epoch, train_risk, val_risk, progress_reports = self.load_checkpoint(model)
         else:
             epoch = 0

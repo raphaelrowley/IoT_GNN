@@ -35,8 +35,8 @@ def main():
     print('\rStarting training…', end='')
     trainer = ModelTrainer(training_config, train_data, val_data)
 
-    trainer.train_model(model)
-    trainer.train_model(model2)
+    trainer.train_model(model, False)
+    trainer.train_model(model2, False)
 
 
 if __name__ == "__main__":
