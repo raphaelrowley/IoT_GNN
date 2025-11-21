@@ -3,6 +3,7 @@ from configuration import *
 from models import e_graphsage, fnn_model
 from data import IoTDataset
 from train import ModelTrainer
+from tester import ModelTester
 
 
 def main():
@@ -10,6 +11,7 @@ def main():
     print('\rLoading and preprocessing data…', end='')
     train_data = IoTDataset(version=1, multiclass=multiclass)
     val_data = IoTDataset(version=1, multiclass=multiclass, split='val')
+    test_data = IoTDataset(version=1, multiclass=multiclass, split='test')
 
     print('\rInitializing model…', end='')
     model = e_graphsage.E_GraphSAGE(numLayers=2,
@@ -37,6 +39,9 @@ def main():
 
     trainer.train_model(model, False)
     trainer.train_model(model2, False)
+
+    tester = ModelTester(test_data, False)
+    tester.test_model(model)
 
 
 if __name__ == "__main__":
