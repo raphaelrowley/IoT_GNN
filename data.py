@@ -1,3 +1,5 @@
+import copy
+
 import sklearn.utils.class_weight
 import torch
 
@@ -14,7 +16,9 @@ class IoTDataset(torch.utils.data.Dataset):
                  randomize_source_ip=True,
                  test_size=0.2,  # TODO do we want to keep test size and val size fixed?
                  val_size=0.1,
-                 data_parent_dir=None):
+                 data_parent_dir=None,
+                 relabel_nodes=False,
+                 ):
 
         assert split in ['train', 'val', 'test'], 'Invalid split argument'
 
@@ -43,7 +47,7 @@ class IoTDataset(torch.utils.data.Dataset):
         self.set_labels(df, multiclass=multiclass)
 
         # Init Graph
-        self.graph = self.convert_to_dgl(df)
+        self.graph = self.convert_to_dgl(df, relabel_nodes=relabel_nodes)
 
         if not multiclass:
             self.graph.edata['edge_label'] = self.graph.edata['edge_label'].unsqueeze(-1).to(torch.float32)
@@ -142,10 +146,17 @@ class IoTDataset(torch.utils.data.Dataset):
         df.drop(columns=['Label', 'Attack'], inplace=True)
         return
 
-    def convert_to_dgl(self, df):
+    def convert_to_dgl(self, df, relabel_nodes):
         # Create Networkx graph
         g = nx.from_pandas_edgelist(df, source='IPV4_SRC_ADDR', target='IPV4_DST_ADDR', edge_attr=True,
                                     create_using=nx.DiGraph())
+
+        # relabel nodes to check permutation equivariance
+        if relabel_nodes:
+            node_list = list(g)
+            renamed_node_list = copy.deepcopy(node_list)
+            random.shuffle(renamed_node_list)
+            g = nx.relabel_nodes(g, mapping=dict(zip(node_list, renamed_node_list)), copy=True)
 
         dgl_graph = dgl.from_networkx(g, edge_attrs=['edge_attr', 'edge_label'])
 
