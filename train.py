@@ -94,6 +94,8 @@ class ModelTrainer:
 
                 target = self.train_data.__getitem__(0).edata['edge_label']
                 loss = self.loss_fn(logits, target)
+                # Zero gradients before the backward step too
+                self.optimizer.zero_grad(set_to_none=True)  # Recommended in Torch Performance Tuning Guide
                 loss.backward()
 
                 del train_graph     # Maybe unnecessary, but free up memory ASAP for large datasets
@@ -146,6 +148,7 @@ class ModelTrainer:
                 })
                 self.set_checkpoint(epoch, model, train_risk, val_risk, progress_reports)
 
+        # TODO: do a small print of the checkpoint path.
         plt.figure('Risk')
         plt.plot([i + 1 for i in range(self.num_epochs)], train_risk, label='train')
         plt.plot([i + 1 for i in range(self.num_epochs)], val_risk, label='validation')
