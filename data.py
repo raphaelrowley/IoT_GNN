@@ -108,9 +108,11 @@ class IoTDataset(torch.utils.data.Dataset):
         try:
             # Use a stratified split to ensure attack types and benign traffic are represented equally
             train_df, test_df = sk.model_selection.train_test_split(df, stratify=df['Attack'],
-                                                                    test_size=test_size + val_size, shuffle=True)
+                                                                    test_size=test_size + val_size, shuffle=True,
+                                                                    random_state=42)
             test_df, val_df = sk.model_selection.train_test_split(test_df, stratify=test_df['Attack'],
-                                                                  test_size=val_size / (test_size + val_size))
+                                                                  test_size=val_size / (test_size + val_size),
+                                                                  random_state=42)
         except ValueError:
             print('No stratified split feasible')
             train_df, test_df = sk.model_selection.train_test_split(df, test_size=test_size + val_size, shuffle=True)
