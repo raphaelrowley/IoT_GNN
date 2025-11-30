@@ -20,6 +20,10 @@ class IoTDataset(torch.utils.data.Dataset):
     id : str
         String identifier containing dataset, version, and flags (e.g.,
         randomized IP or multiclass).
+
+    Notes
+    ------
+    This docstring was created with assistance from ChatGPT.
     """
 
     def __init__(self,
@@ -67,6 +71,10 @@ class IoTDataset(torch.utils.data.Dataset):
         -------
         None
             The constructor initializes the dataset object and returns nothing.
+
+        Notes
+        ------
+        This docstring was created with assistance from ChatGPT.
         """
 
         assert split in ['train', 'val', 'test'], 'Invalid split argument'
@@ -117,6 +125,10 @@ class IoTDataset(torch.utils.data.Dataset):
         -------
         int
             Always ``1``. This dataset stores a single full-batch graph.
+
+        Notes
+        ------
+        This docstring was created with assistance from ChatGPT.
         """
         return 1
 
@@ -133,6 +145,10 @@ class IoTDataset(torch.utils.data.Dataset):
         -------
         dgl.DGLGraph
             The stored graph representing the entire dataset split.
+
+        Notes
+        ------
+        This docstring was created with assistance from ChatGPT.
         """
         return self.graph
 
@@ -176,6 +192,10 @@ class IoTDataset(torch.utils.data.Dataset):
             - ``'IPV4_SRC_ADDR'`` and ``'IPV4_DST_ADDR'`` indicating the direction of each flow
             - ``'edge_attr'`` : torch.Tensor of normalized numeric features
             - ``'Label'`` and ``'Attack'``
+
+        Notes
+        ------
+        This docstring was created with assistance from ChatGPT.
         """
         df = pd.read_csv(csv_path)
 
@@ -253,6 +273,10 @@ class IoTDataset(torch.utils.data.Dataset):
         -------
         None
             The function writes pickle files to disk and returns nothing.
+
+        Notes
+        ------
+        This docstring was created with assistance from ChatGPT.
         """
         splits = ['train', 'val', 'test']
         for split in splits:
@@ -278,6 +302,10 @@ class IoTDataset(torch.utils.data.Dataset):
         None
             The function updates ``df`` in-place by adding ``'edge_label'`` and
             dropping the original ``'Label'`` and ``'Attack'`` columns.
+
+        Notes
+        ------
+        This docstring was created with assistance from ChatGPT.
         """
         if multiclass:
             # Use sklearn for encoding of the strings to calculate CE-Loss later
@@ -317,6 +345,10 @@ class IoTDataset(torch.utils.data.Dataset):
             ``dgl_graph.edata['edge_label']``. A dummy one vector is stored in
             ``dgl_graph.ndata['node_attr']`` with dimensionality
             matching the number of edge features.
+
+        Notes
+        ------
+        This docstring was created with assistance from ChatGPT.
         """
         # Create Networkx graph
         g = nx.from_pandas_edgelist(df, source='IPV4_SRC_ADDR', target='IPV4_DST_ADDR', edge_attr=True,

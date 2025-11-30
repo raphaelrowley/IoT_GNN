@@ -2,6 +2,48 @@ from configuration import *
 
 
 class ModelTrainer:
+    """
+    Train graph-based neural network models on IoT network-flow data.
+
+    The ``ModelTrainer`` encapsulates the full training loop, including optimizer
+    and scheduler setup, checkpointing, metric tracking, and plotting of training
+    and validation behavior. It operates on full-batch DGL graphs provided by
+    the dataset.
+
+    Attributes
+    ----------
+    num_epochs : int
+        Number of training epochs.
+    lr : float
+        Learning rate used by the optimizer.
+    lr_sched_factor : float
+        Factor used in the ReduceLROnPlateau scheduler (via ``1 / lr_sched_factor``).
+    lr_sched_patience : int
+        Number of epochs without improvement before the learning rate is reduced.
+    train_data : torch.utils.data.Dataset
+        Training dataset instance.
+    val_data : torch.utils.data.Dataset
+        Validation dataset instance.
+    use_gpu : bool
+        Whether training is performed on a CUDA device.
+    device : torch.device
+        Device on which the model and graphs are placed.
+    loss_fn : torch.nn.Module
+        Loss function used for optimization (``CrossEntropyLoss`` or
+        ``BCEWithLogitsLoss``).
+    optimizer : torch.optim.Optimizer or None
+        Optimizer used during training, initialized in :meth:`train_model`.
+    lr_scheduler : torch.optim.lr_scheduler._LRScheduler or None
+        Learning rate scheduler, initialized in :meth:`train_model`.
+    checkpoint_base_path : str
+        Base directory used for storing checkpoint files.
+    checkpoint_path : str or None
+        Full path to the current checkpoint file.
+
+    Notes
+    -----
+    This docstring was created with assistance from ChatGPT.
+    """
 
     def __init__(self, training_config, train_data, val_data):
         """
@@ -34,6 +76,10 @@ class ModelTrainer:
         val_data : torch.utils.data.Dataset
             Validation dataset object with the same structure and attributes
             as ``train_data``.
+
+        Notes
+        ------
+        This docstring was created with assistance from ChatGPT.
         """
 
         self.num_epochs = training_config['num_epochs']
@@ -97,6 +143,10 @@ class ModelTrainer:
             F1 scores per epoch. Same class-handling as ``prec``.
         val_risk : list of float
             Validation risk values per epoch.
+
+        Notes
+        ------
+        This docstring was created with assistance from ChatGPT.
         """
 
         if self.use_gpu:
@@ -246,6 +296,10 @@ class ModelTrainer:
         val_risk : list of float
             List of validation risk scores.
         progress_reports : dict
+
+        Notes
+        ------
+        This docstring was created with assistance from ChatGPT.
         """
 
         (epoch, train_risk, val_risk, progress_reports,
@@ -288,6 +342,10 @@ class ModelTrainer:
         None
             This function returns ``None``. The checkpoint is written to
             ``self.checkpoint_path``.
+
+        Notes
+        ------
+        This docstring was created with assistance from ChatGPT.
         """
         torch.save([epoch, train_risk, val_risk, progress_reports,
                     torch.get_rng_state(), model.state_dict(), self.optimizer.state_dict(),
