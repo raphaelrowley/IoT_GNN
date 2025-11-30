@@ -40,8 +40,8 @@ def main():
                                                    )
 
     print('\r' + ' ' * 50 + '\r', end='')
-    for model in [model, model2, model3]:
-        print(f'Number of learnable parameters in {model.id}: {sum(p.numel() for p in model.parameters() if p.requires_grad)}')
+    for model_t in [model, model2, model3]:
+        print(f'Number of learnable parameters in {model_t.id}: {sum(p.numel() for p in model_t.parameters() if p.requires_grad)}')
 
     training_config = {
         'num_epochs': 100,             # TODO Increase? # 5000
@@ -60,6 +60,8 @@ def main():
 
     tester = ModelTester(test_data, False)
     tester.test_model(model)
+    tester.test_model(model2)
+    tester.test_model(model3)
 
 
 if __name__ == "__main__":
