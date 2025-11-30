@@ -38,9 +38,9 @@ class ModelTester:
         
         # TODO: Do we even need test_risk and progress_reports?
         test_risk = []
+        progress_reports = {}
         if len(self.test_data.classes) > 2:
             # multiclass_classification
-            progress_reports = {}
             for cls in self.test_data.encoder.inverse_transform(self.test_data.classes):
                 progress_reports[cls] = {}
                 progress_reports[cls]['precision'] = []
@@ -53,12 +53,18 @@ class ModelTester:
             progress_reports['weighted avg']['accuracy'] = []
             progress_reports['weighted avg']['far'] = []
         else:
-            progress_reports = {}
-            progress_reports['precision'] = []
-            progress_reports['recall'] = []
-            progress_reports['f1-score'] = []
+            for cls in self.test_data.classes:
+                progress_reports[cls] = {}
+                progress_reports[cls]['precision'] = []
+                progress_reports[cls]['recall'] = []
+                progress_reports[cls]['f1-score'] = []
             progress_reports['accuracy'] = []
+            progress_reports['weighted avg'] = {}
+            progress_reports['weighted avg']['precision'] = []
+            progress_reports['weighted avg']['recall'] = []
+            progress_reports['weighted avg']['f1-score'] = []
             progress_reports['far'] = []
+
         
         # Load the test graph
         test_graph = copy.deepcopy(self.test_data.__getitem__(0))
@@ -102,7 +108,7 @@ class ModelTester:
 
                 # Reporting / Display Section
                 report_text = []
-                report_text.append("===== Test Report =====\n")
+                report_text.append("===== Multiclass Test Report =====\n")
                 for key in progress_reports.keys():
                     report_text.append(f"== {key} ==\n")
                     report_text.append(f"Precision: {progress_reports[key]['precision'][0]:.6f}\n")
@@ -151,21 +157,97 @@ class ModelTester:
             else:
                 y_pred = 0.5 * (1+torch.sgn(logits))
                 cls_report = sk.metrics.classification_report(y_true=target, y_pred=y_pred, output_dict=True, zero_division=0.0)
+                # Accuracy is still misleading given our imbalanced dataset.
                 acc_report = sk.metrics.accuracy_score(y_true=target, y_pred=y_pred,
                                                        normalize=True)
                 bal_acc_report = sk.metrics.balanced_accuracy_score(y_true=target, y_pred=y_pred)
+                
+                # Computation of FAR for the binary case.
                 conf_matrix = sklearn.metrics.confusion_matrix(y_true=target, y_pred=y_pred, labels=self.test_data.classes)
                 tn, fp, fn, tp = conf_matrix.ravel()
 
                 far = fp / (fp + tn)
 
-                print(self.test_data.classes)
-                sklearn.metrics.ConfusionMatrixDisplay.from_predictions(y_true=target, y_pred=y_pred, labels=self.test_data.classes , display_labels=self.test_data.encoder.inverse_transform(self.test_data.classes), normalize='true')
-                print(cls_report)
-                print("acc", acc_report)
-                print("bal_acc", bal_acc_report)
-                print("far", far)
-                print(conf_matrix)
+                # Update progress report
+                for key in cls_report.keys():
+                    pr_key = key
+                    if key == 'accuracy':
+                        continue
+                    elif key == 'macro avg':
+                        continue
+                    if key == '0.0':
+                        pr_key = 0
+                    elif key == '1.0':
+                        pr_key = 1
+                    
+                    progress_reports[pr_key]['precision'].append(cls_report[key]['precision'])
+                    progress_reports[pr_key]['recall'].append(cls_report[key]['recall'])
+                    progress_reports[pr_key]['f1-score'].append(cls_report[key]['f1-score'])
+                progress_reports['accuracy'].append(cls_report['accuracy'])
+                progress_reports['far'].append(far)
+
+                # Reporting / Display Section
+                report_text = []
+                report_text.append("===== Binary Test Report =====\n")
+                for key in progress_reports.keys():
+                    if (key == 'accuracy') or (key == 'far'):
+                        continue
+                    if (key == 0):
+                        report_text.append(f"== Benign ==\n")
+                        report_text.append(f"Precision: {progress_reports[key]['precision'][0]:.6f}\n")
+                        report_text.append(f"Recall:    {progress_reports[key]['recall'][0]:.6f}\n")
+                        report_text.append(f"F1-score:  {progress_reports[key]['f1-score'][0]:.6f}\n\n") 
+                    elif (key == 1):
+                        report_text.append(f"== Attack ==\n")
+                        report_text.append(f"Precision: {progress_reports[key]['precision'][0]:.6f}\n")
+                        report_text.append(f"Recall:    {progress_reports[key]['recall'][0]:.6f}\n")
+                        report_text.append(f"F1-score:  {progress_reports[key]['f1-score'][0]:.6f}\n\n") 
+                    else:
+                        report_text.append(f"== {key} ==\n")
+                        report_text.append(f"Precision: {progress_reports[key]['precision'][0]:.6f}\n")
+                        report_text.append(f"Recall:    {progress_reports[key]['recall'][0]:.6f}\n")
+                        report_text.append(f"F1-score:  {progress_reports[key]['f1-score'][0]:.6f}\n\n")
+                    
+                report_text.append(f"= Global Metrics =\n")
+                report_text.append(f"Accuracy:           {progress_reports['accuracy'][0]:.6f}\n")
+                report_text.append(f"False Alarm Rate:  {progress_reports['far'][0]:.6f}\n\n")
+
+                # Confusion matrix
+                report_text.append("Confusion Matrix:\n")
+                report_text.append(str(conf_matrix) + "\n\n")
+
+
+                # Convest report to text, print it and write to file.
+                report_text = "".join(report_text)
+                
+                print(report_text)
+
+                report_path = self.checkpoint_path + "_test_report.txt"
+                with open(report_path, "w") as f:
+                    f.write(report_text)
+
+                sklearn.metrics.ConfusionMatrixDisplay.from_predictions(
+                    y_true=target, 
+                    y_pred=y_pred, 
+                    labels=self.test_data.classes, 
+                    display_labels=["Benign", "Attack"], 
+                    normalize='true'
+                )
+
+                disp = sklearn.metrics.ConfusionMatrixDisplay.from_predictions(
+                    y_true=target, 
+                    y_pred=y_pred, 
+                    labels=self.test_data.classes, 
+                    display_labels=["Benign", "Attack"], 
+                    normalize='true'
+                )
+
+                # Save Confusion Matrix at same place as the checkpoints
+                plt.savefig(self.checkpoint_path + "_confusion_matrix.png", dpi=300, bbox_inches='tight')
+                plt.close()
+
+                print("Report and confusion matrix recorded in: ", self.checkpoint_path)
+                
 
 
 
