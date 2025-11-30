@@ -2,6 +2,25 @@ from configuration import *
 
 
 class IoTDataset(torch.utils.data.Dataset):
+    """
+    A IoT NIDS dataset, represented as a single DGLGraph.
+
+    Attributes
+    ----------
+    graph : dgl.DGLGraph
+        The constructed DGL graph containing ``edge_attr`` and ``edge_label``.
+    encoder : sklearn.preprocessing.LabelEncoder or None
+        Encoder used when performing multiclass label encoding.
+    num_features : int
+        Number of edge features in ``edge_attr``.
+    classes : ndarray
+        Unique label values present in the dataset split.
+    class_weights : ndarray
+        Class weights computed with ``class_weight='balanced'`` for loss weighting.
+    id : str
+        String identifier containing dataset, version, and flags (e.g.,
+        randomized IP or multiclass).
+    """
 
     def __init__(self,
                  dataset='NF-BoT-IoT',
@@ -43,22 +62,6 @@ class IoTDataset(torch.utils.data.Dataset):
         relabel_nodes : bool, optional
             If True, graph node identifiers are randomly permuted after graph creation
             (useful for testing permutation equivariance).
-
-        Attributes
-        ----------
-        graph : dgl.DGLGraph
-            The constructed DGL graph containing ``edge_attr`` and ``edge_label``.
-        encoder : sklearn.preprocessing.LabelEncoder or None
-            Encoder used when performing multiclass label encoding.
-        num_features : int
-            Number of edge features in ``edge_attr``.
-        classes : ndarray
-            Unique label values present in the dataset split.
-        class_weights : ndarray
-            Class weights computed with ``class_weight='balanced'`` for loss weighting.
-        id : str
-            String identifier containing dataset, version, and flags (e.g.,
-            randomized IP or multiclass).
 
         Returns
         -------
