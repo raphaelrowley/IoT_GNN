@@ -1,6 +1,6 @@
 from configuration import *
 
-from models import e_graphsage, fnn_model
+from models import e_graphsage, fnn_model, e_graphsage_hembed
 from data import IoTDataset
 from train import ModelTrainer
 from tester import ModelTester
@@ -9,7 +9,7 @@ from tester import ModelTester
 def main():
     dataset_config = {
         'multiclass': True,
-        'dataset': 'NF-ToN-IoT',
+        'dataset': 'NF-BoT-IoT',
         'version': 1,
         'randomize_source_ip': True,
         'relabel_nodes': False,
@@ -20,21 +20,31 @@ def main():
     val_data = IoTDataset(**dataset_config, split='val')
     test_data = IoTDataset(**dataset_config, split='test')
 
-    print('\rInitializing model…', end='')
+    print('\rInitializing models…', end='')
     model = e_graphsage.E_GraphSAGE(numLayers=2,
                                     dim_node_embed=128,
                                     num_edge_attr=train_data.num_features,
                                     num_classes=len(train_data.classes)
                                     )
 
-    model2 = fnn_model.TestFNN(num_hidden_layers=3,
-                               hidden_layer_widths=[128, 128, 256],  # Should be approximately comparable to EGS
+    model2 = fnn_model.TestFNN(num_hidden_layers=2,
+                               hidden_layer_widths=[128, 192],  # Should be approximately comparable to EGS
                                num_edge_attr=train_data.num_features,
                                num_classes=len(train_data.classes),
                                )
 
+    model3 = e_graphsage_hembed.E_GraphSAGE_hEmbed(numLayers=2,
+                                                   dim_node_embed=96,       # Approximately equal parameter count as EGS
+                                                   num_edge_attr=train_data.num_features,
+                                                   num_classes=len(train_data.classes)
+                                                   )
+
+    print('\r' + ' ' * 50 + '\r', end='')
+    for model_t in [model, model2, model3]:
+        print(f'Number of learnable parameters in {model_t.id}: {sum(p.numel() for p in model_t.parameters() if p.requires_grad)}')
+
     training_config = {
-        'num_epochs': 5000,             # TODO Increase?
+        'num_epochs': 100,             # TODO Increase? # 5000
         'lr': 1e-3,
         'gpu': False,
         'lr_sched_factor': np.sqrt(10),     # TODO or set to 1 first?
@@ -46,9 +56,12 @@ def main():
 
     trainer.train_model(model, True)
     trainer.train_model(model2, True)
+    trainer.train_model(model3, True)
 
     tester = ModelTester(test_data, False)
     tester.test_model(model)
+    tester.test_model(model2)
+    tester.test_model(model3)
 
 
 if __name__ == "__main__":

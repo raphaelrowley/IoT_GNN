@@ -1,27 +1,27 @@
 from configuration import *
 
-class E_GraphSAGE(nn.Module):
+class E_GraphSAGE_hEmbed(nn.Module):
 
     def __init__(self, numLayers, dim_node_embed, num_edge_attr, num_classes, dropout=0.2):
-        super(E_GraphSAGE, self).__init__()
+        super(E_GraphSAGE_hEmbed, self).__init__()
 
         # Use the given number of E_GraphSAGE_Layers, dropout between each layer
         self.graphsage = nn.Sequential(
-            E_GraphSAGE_Layer(num_edge_attr=num_edge_attr,
-                              dim_node_embed=num_edge_attr,
-                              dim_new_node_embed=dim_node_embed,
-                              dropout=(dropout if numLayers > 1 else None),
-                              ),
+            E_GraphSAGE_hEmbed_Layer(num_edge_attr=num_edge_attr,
+                                     dim_node_embed=num_edge_attr,
+                                     dim_new_node_embed=dim_node_embed,
+                                     dropout=(dropout if numLayers > 1 else None),
+                                    ),
         )
         for k in range(numLayers-2):
             self.graphsage.append(
-                E_GraphSAGE_Layer(num_edge_attr=num_edge_attr, dim_node_embed=dim_node_embed,
-                                  dim_new_node_embed=dim_node_embed, dropout=dropout),
+                E_GraphSAGE_hEmbed_Layer(num_edge_attr=num_edge_attr, dim_node_embed=dim_node_embed,
+                                         dim_new_node_embed=dim_node_embed, dropout=dropout),
             )
         if numLayers > 1:
             self.graphsage.append(
-                E_GraphSAGE_Layer(num_edge_attr=num_edge_attr, dim_node_embed=dim_node_embed,
-                                  dim_new_node_embed=dim_node_embed, dropout=None),
+                E_GraphSAGE_hEmbed_Layer(num_edge_attr=num_edge_attr, dim_node_embed=dim_node_embed,
+                                         dim_new_node_embed=dim_node_embed, dropout=None),
             )
 
         dim_output = 1 if (num_classes == 2) else num_classes
@@ -29,7 +29,7 @@ class E_GraphSAGE(nn.Module):
             nn.Linear(2*dim_node_embed, dim_output),
         )
 
-        self.id = f'E_GraphSAGE_K{numLayers}'
+        self.id = f'E_GraphSAGE_hEmbed_K{numLayers}'
 
     def forward(self, graph):
         graph = self.graphsage(graph)
@@ -41,12 +41,12 @@ class E_GraphSAGE(nn.Module):
         return graph
 
 
-class E_GraphSAGE_Layer(nn.Module):
+class E_GraphSAGE_hEmbed_Layer(nn.Module):
 
     def __init__(self, num_edge_attr, dim_node_embed, dim_new_node_embed, dropout=0.2):
-        super(E_GraphSAGE_Layer, self).__init__()
+        super(E_GraphSAGE_hEmbed_Layer, self).__init__()
 
-        self.linear = nn.Linear(in_features=(dim_node_embed+num_edge_attr), out_features=dim_new_node_embed, bias=True)
+        self.linear = nn.Linear(in_features=(2*dim_node_embed+num_edge_attr), out_features=dim_new_node_embed, bias=True)
         self.relu = nn.ReLU()
 
         self.dropout = None
@@ -60,6 +60,16 @@ class E_GraphSAGE_Layer(nn.Module):
             dgl.function.copy_e(e='edge_attr', out='m'),
             dgl.function.mean(msg='m', out='h_Nv')
         )
+
+        # Also aggregate node features
+        graph.update_all(
+            dgl.function.copy_u(u='node_attr', out='mh'),
+            dgl.function.mean(msg='mh', out='h_Nvh')
+        )
+
+        # concat aggregations
+        graph.ndata['h_Nv'] = torch.cat((graph.ndata['h_Nv'], graph.ndata['h_Nvh']), dim=-1)
+        del graph.ndata['h_Nvh']
 
         # Line (5)
         graph.ndata['node_attr'] = self.linear(torch.cat((graph.ndata['node_attr'], graph.ndata['h_Nv']), dim=-1))
