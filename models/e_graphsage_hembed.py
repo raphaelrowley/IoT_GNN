@@ -29,7 +29,7 @@ class E_GraphSAGE_hEmbed(nn.Module):
             nn.Linear(2*dim_node_embed, dim_output),
         )
 
-        self.id = f'E_GraphSAGE_hEmbed_K{numLayers}'
+        self.id = f'E_GraphSAGE_hEmbed_K{numLayers}_H{dim_node_embed}'
 
     def forward(self, graph):
         graph = self.graphsage(graph)
