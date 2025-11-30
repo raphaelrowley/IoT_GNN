@@ -4,6 +4,37 @@ from configuration import *
 class ModelTrainer:
 
     def __init__(self, training_config, train_data, val_data):
+        """
+        Initializes the model trainer with configuration parameters, datasets,
+        loss function, and device settings.
+
+        Parameters
+        ----------
+        training_config : dict
+            Dictionary containing training hyperparameters. Expected keys:
+
+            - ``num_epochs`` : int
+              Number of training epochs.
+            - ``lr`` : float
+              Learning rate used for the Adam optimizer.
+            - ``lr_sched_factor`` : float
+              Multiplicative factor used as 1/lr_sched_factor in ReduceLROnPlateau.
+            - ``lr_sched_patience`` : int
+              Number of epochs with no improvement before LR is reduced.
+            - ``gpu`` : bool
+              If True, training is executed on a CUDA device.
+        train_data : torch.utils.data.Dataset
+            Training dataset object. Expected attributes:
+
+            - ``graph`` : DGLGraph containing edge features.
+            - ``classes`` : array-like of class indices.
+            - ``class_weights`` : array-like of class weights.
+            - ``id`` : string identifier for checkpoint naming.
+
+        val_data : torch.utils.data.Dataset
+            Validation dataset object with the same structure and attributes
+            as ``train_data``.
+        """
 
         self.num_epochs = training_config['num_epochs']
         self.lr = training_config['lr']
@@ -42,8 +73,32 @@ class ModelTrainer:
 
         self.checkpoint_path = None
 
-
     def train_model(self, model, use_checkpoint):
+        """
+        Train the model for a fixed number of epochs, optionally resuming from a
+        saved checkpoint.
+
+        Parameters
+        ----------
+        model : nn.Module
+            Model instance to be trained.
+        use_checkpoint : bool
+            If True and a checkpoint exists, resume training using the stored epoch,
+            optimizer state, and recorded metrics.
+
+        Returns
+        -------
+        prec : list of float
+            Precision scores per epoch. For multiclass: weighted average. For binary:
+            positive-class precision.
+        recall : list of float
+            Recall scores per epoch. Same class-handling as ``prec``.
+        f1 : list of float
+            F1 scores per epoch. Same class-handling as ``prec``.
+        val_risk : list of float
+            Validation risk values per epoch.
+        """
+
         if self.use_gpu:
             model = model.to(self.device)
 
@@ -116,7 +171,7 @@ class ModelTrainer:
                     # negligible difference due to stratified split)
                     target = self.val_data.__getitem__(0).edata['edge_label']
                     val_loss = self.loss_fn(logits, target)
-                    val_risk.append(val_loss)
+                    val_risk.append(val_loss.item())
 
                     self.lr_scheduler.step(val_loss)
 
@@ -173,8 +228,26 @@ class ModelTrainer:
 
         return prec, recall, f1, val_risk
 
+    def load_checkpoint(self, model) -> tuple[int, list[float], list[float], dict]:
+        """
+        Loads training progress and model weights from a given checkpoint.
 
-    def load_checkpoint(self, model):
+        Parameters
+        ----------
+        model : nn.Module
+            Model instance into which the checkpoint weights are loaded.
+
+        Returns
+        -------
+        epoch : int
+            Epoch saved in the checkpoint.
+        train_risk : list of float
+            List of training risk scores.
+        val_risk : list of float
+            List of validation risk scores.
+        progress_reports : dict
+        """
+
         (epoch, train_risk, val_risk, progress_reports,
          rng_state, _ ,optim_sd, lr_sched_sd) = torch.load(self.checkpoint_path, weights_only=False)
 
@@ -193,6 +266,29 @@ class ModelTrainer:
 
 
     def set_checkpoint(self, epoch, model, train_risk, val_risk, progress_reports):
+        """
+        Save a training checkpoint containing model state, optimizer state,
+        scheduler state, and recorded training progress.
+
+        Parameters
+        ----------
+        epoch : int
+            Epoch index to save in the checkpoint.
+        model : nn.Module
+            Model whose parameters are stored via ``state_dict()``.
+        train_risk : list of float
+            Training loss values recorded so far.
+        val_risk : list of float
+            Validation loss values recorded so far.
+        progress_reports : dict
+            Per-epoch classification metrics such as precision, recall, and F1 score.
+
+        Returns
+        -------
+        None
+            This function returns ``None``. The checkpoint is written to
+            ``self.checkpoint_path``.
+        """
         torch.save([epoch, train_risk, val_risk, progress_reports,
                     torch.get_rng_state(), model.state_dict(), self.optimizer.state_dict(),
                     self.lr_scheduler.state_dict()],
