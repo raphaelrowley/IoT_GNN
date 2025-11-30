@@ -16,6 +16,8 @@ import ipaddress
 import dgl
 import pickle
 
+import sklearn.utils.class_weight
+
 import copy
 from tqdm import trange
 
