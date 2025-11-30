@@ -67,11 +67,6 @@ class IoTDataset(torch.utils.data.Dataset):
             If True, graph node identifiers are randomly permuted after graph creation
             (useful for testing permutation equivariance).
 
-        Returns
-        -------
-        None
-            The constructor initializes the dataset object and returns nothing.
-
         Notes
         ------
         This docstring was created with assistance from ChatGPT.
