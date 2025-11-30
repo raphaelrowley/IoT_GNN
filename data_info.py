@@ -97,17 +97,6 @@ def getGraphInfo(graph):
     try:
         _ = nx.find_cycle(graph)
         print("The graph contains cycles.")
-        nodeList = list(graph.nodes)
-        longest_path = 0
-        for idx, i in enumerate(nodeList):
-            for j in nodeList[idx+1:]:
-                simple_paths_ij = len(list(nx.all_simple_paths(graph, source=i, target=j)))
-                simple_paths_ji = len(list(nx.all_simple_paths(graph, source=j, target=i)))
-                maxValue = simple_paths_ij if simple_paths_ij > simple_paths_ji else simple_paths_ji
-                if maxValue > longest_path:
-                    longest_path = maxValue
-
-        print("Longest path (in terms of number of simple paths between any two nodes):", longest_path)
 
     except nx.exception.NetworkXNoCycle:
         print("The graph is acyclic.")

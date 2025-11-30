@@ -170,6 +170,8 @@ class ModelTrainer:
         plt.savefig(self.checkpoint_path.replace('.pt', '_classification.png'), dpi=300)
         plt.close()
 
+        return prec, recall, f1, val_risk
+
 
     def load_checkpoint(self, model):
         (epoch, train_risk, val_risk, progress_reports,
