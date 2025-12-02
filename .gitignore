@@ -1,2 +1,4 @@
 iot_venv/
 __pycache__
+data
+checkpoints
