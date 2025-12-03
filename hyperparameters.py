@@ -77,6 +77,7 @@ def main(dataset, version, randomized, model_type, multiclass, numEpochs, numRea
     for g in range(numRealizations):
         print(f'Realization {g+1}/{numRealizations}')
         np.random.seed(g) #random seed for the randomization of ip addresses
+        torch.manual_seed(g) #random seed for pytorch
         train_data = IoTDataset(**dataset_config)
         val_data = IoTDataset(**dataset_config, split='val')
         trainer = ModelTrainer(training_config, train_data, val_data)
@@ -89,7 +90,7 @@ def main(dataset, version, randomized, model_type, multiclass, numEpochs, numRea
                                                 num_edge_attr=train_data.num_features,
                                                 num_classes=len(train_data.classes),
                                                 dropout=0.2,
-                                                normalization=True
+                                                normalization=False
                                                 )
                 elif model_type == 'E_GraphSAGE_hEmbed':
                     model = e_graphsage_hembed.E_GraphSAGE_hEmbed(numLayers=k,
@@ -104,8 +105,8 @@ def main(dataset, version, randomized, model_type, multiclass, numEpochs, numRea
         os.remove(f'{data_path}-train{("-randomized" if randomized else "")}.pkl')
         os.remove(f'{data_path}-val{("-randomized" if randomized else "")}.pkl')
         os.remove(f'{data_path}-test{("-randomized" if randomized else "")}.pkl')
-    for k_idx, k in enumerate(numK):
-        for h_idx, h in enumerate(dimH):
+    for idx_k, k in enumerate(numK):
+        for idx_h, h in enumerate(dimH):
             print(f'K={k}, H={h} =>')
             print(f'F1-Score: {np.mean(f1_score[idx_k,idx_h,:]):.2f} ± {np.std(f1_score[idx_k,idx_h,:]):.2f}, {np.min(f1_score[idx_k,idx_h,:]):.2f}-{np.max(f1_score[idx_k,idx_h,:]):.2f}')
             print(f'Recall:   {np.mean(re_score[idx_k,idx_h,:]):.2f} ± {np.std(re_score[idx_k,idx_h,:]):.2f}, {np.min(re_score[idx_k,idx_h,:]):.2f}-{np.max(re_score[idx_k,idx_h,:]):.2f}')
