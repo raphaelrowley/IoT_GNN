@@ -125,9 +125,9 @@ if __name__ == "__main__":
     model_type = 'E_GraphSAGE' #e.g., 'E_GraphSAGE', E_GraphSAGE_hEmbed
     multiclass = True
     numEpochs = 2000
-    numRealizations = 1
+    numRealizations = 5
     numK = [2]
-    dimH = [64]
+    dimH = [64,128]
 
     data_path = os.path.join(os.getcwd(), 'hyperparam') 
 
