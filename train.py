@@ -101,13 +101,16 @@ class ModelTrainer:
             self.use_gpu = False
             self.device = torch.device('cpu')
 
+            self.train_data.graph = self.train_data.graph.to(self.device)
+            self.val_data.graph = self.val_data.graph.to(self.device)
+
         if len(train_data.classes) > 2:
             self.loss_fn = nn.CrossEntropyLoss(
-                weight = torch.tensor(train_data.class_weights, dtype=torch.float32)
+                weight = torch.tensor(train_data.class_weights, dtype=torch.float32, device=self.device)
             )
         else:
             self.loss_fn = nn.BCEWithLogitsLoss(
-                pos_weight=torch.tensor(train_data.class_weights[1] / train_data.class_weights[1], dtype=torch.float32)
+                pos_weight=torch.tensor(train_data.class_weights[1] / train_data.class_weights[1], dtype=torch.float32, device=self.device)
             )
 
         self.optimizer = None
@@ -151,6 +154,8 @@ class ModelTrainer:
 
         if self.use_gpu:
             model = model.to(self.device)
+        else:
+            model = model.to(self.device)
 
         self.optimizer = torch.optim.Adam(model.parameters(), lr=self.lr)
         self.lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
@@ -193,11 +198,12 @@ class ModelTrainer:
                 # We are doing full-batch training, no need for iterators or dataloaders :)
                 train_graph = copy.deepcopy(self.train_data.__getitem__(0))
                 del train_graph.edata['edge_label']   # prevent target leakage
+                train_graph = train_graph.to(self.device)
 
                 model.forward(train_graph)
                 logits = train_graph.edata['edge_pred']
 
-                target = self.train_data.__getitem__(0).edata['edge_label']
+                target = self.train_data.__getitem__(0).edata['edge_label'].to(self.device)
                 loss = self.loss_fn(logits, target)
                 # Zero gradients before the backward step too
                 self.optimizer.zero_grad(set_to_none=True)  # Recommended in Torch Performance Tuning Guide
@@ -212,22 +218,29 @@ class ModelTrainer:
                 with torch.no_grad():
                     val_graph = copy.deepcopy(self.val_data.__getitem__(0))
                     del val_graph.edata['edge_label']  # prevent target leakage
+                    val_graph = val_graph.to(self.device)
                     model.forward(val_graph)
                     logits = val_graph.edata['edge_pred']
+                    if ((epoch % 25) == 0):
+                        print(f"[Epoch {epoch}] logit mean: {logits.mean().item():.4f}, std: {logits.std().item():.4f}")
 
                     del val_graph      # Maybe unnecessary, but free up memory ASAP for large datasets
 
                     # Compute validation loss (using the same weights as in training data set;
                     # negligible difference due to stratified split)
-                    target = self.val_data.__getitem__(0).edata['edge_label']
+                    target = self.val_data.__getitem__(0).edata['edge_label'].to(self.device)
                     val_loss = self.loss_fn(logits, target)
                     val_risk.append(val_loss.item())
 
                     self.lr_scheduler.step(val_loss)
 
                     if len(self.val_data.classes) > 2:
-                        y_pred = torch.argmax(logits, dim=-1)
-                        cls_report = sk.metrics.classification_report(y_true=target, y_pred=y_pred,
+                        y_pred_cpu = torch.argmax(logits, dim=-1)
+                        target_cpu = target
+                        if self.use_gpu:
+                            y_pred_cpu = torch.argmax(logits, dim=-1).detach().cpu()
+                            target_cpu = target.detach().cpu()
+                        cls_report = sk.metrics.classification_report(y_true=target_cpu, y_pred=y_pred_cpu,
                                                                       labels=self.val_data.classes,
                                                                       target_names=self.val_data.encoder.inverse_transform(self.val_data.classes),
                                                                       output_dict=True, zero_division=0.0)
@@ -236,8 +249,12 @@ class ModelTrainer:
                             progress_reports[key]['recall'].append(cls_report[key]['recall'])
                             progress_reports[key]['f1-score'].append(cls_report[key]['f1-score'])
                     else:
-                        y_pred = 0.5 * (1+torch.sgn(logits))
-                        cls_report = sk.metrics.classification_report(y_true=target, y_pred=y_pred, output_dict=True, zero_division=0.0)
+                        y_pred_cpu = 0.5 * (1+torch.sgn(logits))
+                        target_cpu = target
+                        if self.use_gpu:
+                            y_pred_cpu = 0.5 * (1+torch.sgn(logits)).detach().cpu()
+                            target_cpu = target.detach().cpu()
+                        cls_report = sk.metrics.classification_report(y_true=target_cpu, y_pred=y_pred_cpu, output_dict=True, zero_division=0.0)
                         progress_reports['precision'].append(cls_report['1.0']['precision'])
                         progress_reports['recall'].append(cls_report['1.0']['recall'])
                         progress_reports['f1-score'].append(cls_report['1.0']['f1-score'])
