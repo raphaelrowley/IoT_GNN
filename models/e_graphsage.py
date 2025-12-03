@@ -25,7 +25,7 @@ class E_GraphSAGE(nn.Module):
     This docstring was created with assistance from ChatGPT.
     """
 
-    def __init__(self, numLayers, dim_node_embed, num_edge_attr, num_classes, dropout=0.2):
+    def __init__(self, numLayers, dim_node_embed, num_edge_attr, num_classes, dropout=0.2, normalization=False):
         """
         Initializes an E-GraphSAGE model.
 
@@ -43,6 +43,8 @@ class E_GraphSAGE(nn.Module):
         dropout : float, optional
             Dropout probability after each hidden layer except the last.
             If ``None``, dropout is omitted.
+        normalization : bool, optional
+            If True, add a normalization layer after activation in each hidden layer.
 
         Notes
         -----
@@ -57,17 +59,18 @@ class E_GraphSAGE(nn.Module):
                               dim_node_embed=num_edge_attr,
                               dim_new_node_embed=dim_node_embed,
                               dropout=(dropout if numLayers > 1 else None),
+                              normalization = normalization if numLayers > 1 else False
                               ),
         )
         for k in range(numLayers-2):
             self.graphsage.append(
                 E_GraphSAGE_Layer(num_edge_attr=num_edge_attr, dim_node_embed=dim_node_embed,
-                                  dim_new_node_embed=dim_node_embed, dropout=dropout),
+                                  dim_new_node_embed=dim_node_embed, dropout=dropout, normalization=normalization),
             )
         if numLayers > 1:
             self.graphsage.append(
                 E_GraphSAGE_Layer(num_edge_attr=num_edge_attr, dim_node_embed=dim_node_embed,
-                                  dim_new_node_embed=dim_node_embed, dropout=None),
+                                  dim_new_node_embed=dim_node_embed, dropout=None, normalization=False),
             )
 
         dim_output = 1 if (num_classes == 2) else num_classes
@@ -117,13 +120,15 @@ class E_GraphSAGE_Layer(nn.Module):
         Activation function applied after the linear transformation.
     dropout : nn.Dropout or None
         Optional dropout applied to updated node embeddings.
+    normalization : nn.BatchNorm1d or None
+        Optional normalization layer applied after activation.
 
     Notes
     -----
     This docstring was created with assistance from ChatGPT.
     """
 
-    def __init__(self, num_edge_attr, dim_node_embed, dim_new_node_embed, dropout=0.2):
+    def __init__(self, num_edge_attr, dim_node_embed, dim_new_node_embed, dropout=0.2, normalization=False):
         """
         Initializes an E-GraphSAGE layer.
 
@@ -138,6 +143,8 @@ class E_GraphSAGE_Layer(nn.Module):
         dropout : float or None, optional
             Dropout rate applied to updated node embeddings. If ``None``,
             dropout is omitted.
+        normalization : bool, optional
+            If True, add a normalization layer after activation.
 
         Notes
         -----
@@ -147,7 +154,10 @@ class E_GraphSAGE_Layer(nn.Module):
 
         self.linear = nn.Linear(in_features=(dim_node_embed+num_edge_attr), out_features=dim_new_node_embed, bias=True)
         self.relu = nn.ReLU()
-
+        if normalization:
+            self.normalization = nn.BatchNorm1d(dim_new_node_embed)
+        else:
+            self.normalization = None
         self.dropout = None
         if dropout is not None:
             self.dropout = nn.Dropout(dropout)
@@ -159,7 +169,7 @@ class E_GraphSAGE_Layer(nn.Module):
         Performs the following:
         1. Aggregates incoming edge attributes via mean aggregation.
         2. Concatenates old node embeddings with aggregated edge attributes.
-        3. Applies linear transformation, ReLU, and optional dropout.
+        3. Applies linear transformation, ReLU, and optional normalization and dropout.
 
         Parameters
         ----------
@@ -185,6 +195,8 @@ class E_GraphSAGE_Layer(nn.Module):
         # Line (5)
         graph.ndata['node_attr'] = self.linear(torch.cat((graph.ndata['node_attr'], graph.ndata['h_Nv']), dim=-1))
         graph.ndata['node_attr'] = self.relu(graph.ndata['node_attr'])
+        if self.normalization is not None:
+            graph.ndata['node_attr'] = self.normalization(graph.ndata['node_attr'])
         if self.dropout is not None:
             graph.ndata['node_attr'] = self.dropout(graph.ndata['node_attr'])
         del graph.ndata['h_Nv']

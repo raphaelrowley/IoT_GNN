@@ -87,7 +87,9 @@ def main(dataset, version, randomized, model_type, multiclass, numEpochs, numRea
                     model = e_graphsage.E_GraphSAGE(numLayers=k,
                                                 dim_node_embed=h,
                                                 num_edge_attr=train_data.num_features,
-                                                num_classes=len(train_data.classes)
+                                                num_classes=len(train_data.classes),
+                                                dropout=0.2,
+                                                normalization=True
                                                 )
                 elif model_type == 'E_GraphSAGE_hEmbed':
                     model = e_graphsage_hembed.E_GraphSAGE_hEmbed(numLayers=k,
@@ -115,7 +117,7 @@ if __name__ == "__main__":
     randomized = True
     model_type = 'E_GraphSAGE' #e.g., 'E_GraphSAGE', E_GraphSAGE_hEmbed
     multiclass = True
-    numEpochs = 1000
+    numEpochs = 200
     numRealizations = 1
     numK = [2]
     dimH = [128]
