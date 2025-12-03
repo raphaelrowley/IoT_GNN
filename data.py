@@ -36,6 +36,7 @@ class IoTDataset(torch.utils.data.Dataset):
                  val_size=0.1,
                  data_parent_dir=None,
                  relabel_nodes=False,
+                 g = None
                  ):
         """
         Initializes a graph dataset object by loading or preprocessing the raw NetFlow data,
@@ -66,6 +67,8 @@ class IoTDataset(torch.utils.data.Dataset):
         relabel_nodes : bool, optional
             If True, graph node identifiers are randomly permuted after graph creation
             (useful for testing permutation equivariance).
+        g : int or None, optional
+            Random seed for reproducibility.
 
         Notes
         ------
@@ -83,7 +86,7 @@ class IoTDataset(torch.utils.data.Dataset):
             data_path = os.path.join(data_parent_dir, 'data')
         base_path = os.path.join(data_path, dataset + f'-v{version}')
 
-        df_path = f'{base_path}-{split}{("-randomized" if randomize_source_ip else "")}.pkl'
+        df_path = f'{base_path}-{("" if g is None else f"g{g}-")}{split}{("-randomized" if randomize_source_ip else "")}.pkl'
         df = None
 
         # Check if preprocessed graph exists, else initialize
@@ -92,7 +95,7 @@ class IoTDataset(torch.utils.data.Dataset):
         else:
             csv_path = base_path + '.csv'
             dfs = self.preprocess_data(csv_path, randomize_source_ip, test_size, val_size)
-            self.save_dataframes(base_path, randomize_source_ip, dfs)
+            self.save_dataframes(base_path, randomize_source_ip, dfs, g)
             df = dfs[split]
 
         # Set the required labels
@@ -250,7 +253,7 @@ class IoTDataset(torch.utils.data.Dataset):
         return dfs
 
     @staticmethod
-    def save_dataframes(base_path, randomize_source_ip, dfs):
+    def save_dataframes(base_path, randomize_source_ip, dfs, g):
         """
         Saves train/validation/test dataframes to pickle files.
 
@@ -263,7 +266,8 @@ class IoTDataset(torch.utils.data.Dataset):
             If True, a ``"-randomized"`` suffix is appended to each output filename.
         dfs : dict of pandas.DataFrame
             Dictionary containing the splits with keys ``'train'``, ``'val'``, and ``'test'``.
-
+        g : int or None, optional
+            Random seed for reproducibility.
         Returns
         -------
         None
@@ -275,7 +279,7 @@ class IoTDataset(torch.utils.data.Dataset):
         """
         splits = ['train', 'val', 'test']
         for split in splits:
-            df_path = f'{base_path}-{split}{("-randomized" if randomize_source_ip else "")}.pkl'
+            df_path = f'{base_path}-{("" if g is None else f"g{g}-")}{split}{("-randomized" if randomize_source_ip else "")}.pkl'
             dfs[split].to_pickle(df_path)
 
     def set_labels(self, df, multiclass):

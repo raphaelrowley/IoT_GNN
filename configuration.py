@@ -7,6 +7,7 @@ import networkx as nx
 import sklearn as sk
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
+import multiprocessing
 
 import sklearn.preprocessing
 import sklearn.model_selection
