@@ -45,7 +45,7 @@ class ModelTrainer:
     This docstring was created with assistance from ChatGPT.
     """
 
-    def __init__(self, training_config, train_data, val_data):
+    def __init__(self, training_config, train_data, val_data, g=None):
         """
         Initializes the model trainer with configuration parameters, datasets,
         loss function, and device settings.
@@ -76,7 +76,8 @@ class ModelTrainer:
         val_data : torch.utils.data.Dataset
             Validation dataset object with the same structure and attributes
             as ``train_data``.
-
+        g : int or None, optional
+            Random seed for reproducibility.
         Notes
         ------
         This docstring was created with assistance from ChatGPT.
@@ -118,7 +119,7 @@ class ModelTrainer:
 
         self.checkpoint_base_path = os.path.join(os.path.dirname(__file__), 'checkpoints')
         os.makedirs(self.checkpoint_base_path, exist_ok=True)
-        self.checkpoint_base_path = os.path.join(self.checkpoint_base_path, train_data.id)
+        self.checkpoint_base_path = os.path.join(self.checkpoint_base_path, train_data.id + ("" if g is None else f"-g{g}-"))
 
         self.checkpoint_path = None
 

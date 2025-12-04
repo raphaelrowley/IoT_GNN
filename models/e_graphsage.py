@@ -155,7 +155,7 @@ class E_GraphSAGE_Layer(nn.Module):
         self.linear = nn.Linear(in_features=(dim_node_embed+num_edge_attr), out_features=dim_new_node_embed, bias=True)
         self.relu = nn.ReLU()
         if normalization:
-            self.normalization = nn.BatchNorm1d(dim_new_node_embed)
+            self.normalization = nn.LayerNorm(dim_new_node_embed)
         else:
             self.normalization = None
         self.dropout = None
@@ -194,9 +194,9 @@ class E_GraphSAGE_Layer(nn.Module):
 
         # Line (5)
         graph.ndata['node_attr'] = self.linear(torch.cat((graph.ndata['node_attr'], graph.ndata['h_Nv']), dim=-1))
-        graph.ndata['node_attr'] = self.relu(graph.ndata['node_attr'])
         if self.normalization is not None:
             graph.ndata['node_attr'] = self.normalization(graph.ndata['node_attr'])
+        graph.ndata['node_attr'] = self.relu(graph.ndata['node_attr'])
         if self.dropout is not None:
             graph.ndata['node_attr'] = self.dropout(graph.ndata['node_attr'])
         del graph.ndata['h_Nv']
