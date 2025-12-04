@@ -3,7 +3,7 @@ from configuration import *
 
 class ModelTrainer:
     """
-    Train graph-based neural network models on IoT network-flow data.
+    Train neural network models on IoT network-flow data.
 
     The ``ModelTrainer`` encapsulates the full training loop, including optimizer
     and scheduler setup, checkpointing, metric tracking, and plotting of training
@@ -235,6 +235,7 @@ class ModelTrainer:
                     self.lr_scheduler.step(val_loss)
 
                     if len(self.val_data.classes) > 2:
+                        # Need to compute cls_report on the CPU.
                         y_pred_cpu = torch.argmax(logits, dim=-1)
                         target_cpu = target
                         if self.use_gpu:
@@ -249,6 +250,7 @@ class ModelTrainer:
                             progress_reports[key]['recall'].append(cls_report[key]['recall'])
                             progress_reports[key]['f1-score'].append(cls_report[key]['f1-score'])
                     else:
+                        # Need to compute cls_report on the CPU.
                         y_pred_cpu = 0.5 * (1+torch.sgn(logits))
                         target_cpu = target
                         if self.use_gpu:
