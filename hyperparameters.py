@@ -31,6 +31,7 @@ def validation(model, trainer):
 def main(dataset, version, randomized, model_type, multiclass, numEpochs, numK, dimH, g):
     """
     Function to run hyperparameter tuning for different models on the specified dataset.
+    It saves the F1-score and Recall as npy files for each combination of hyperparameters for a given random seed g.
     --------------
     Parameters:
     dataset : str
@@ -52,12 +53,6 @@ def main(dataset, version, randomized, model_type, multiclass, numEpochs, numK, 
     g : int
         Random seed for reproducibility.
     --------------
-    Returns:
-    f1_score : np.ndarray of dtype float and dimensions (len(numK), len(dimH), numRealizations)
-        Array of F1-scores for each combination of K and H across realizations.
-    re_score : np.ndarray of dtype float and dimensions (len(numK), len(dimH), numRealizations)
-        Array of recall scores for each combination of K and H across realizations.
-    --------------
     """
     dataset_config = {'multiclass': multiclass, 'dataset': dataset, 'randomize_source_ip': randomized, 'version': version}
     
@@ -70,6 +65,13 @@ def main(dataset, version, randomized, model_type, multiclass, numEpochs, numK, 
     'lr_sched_patience': 100,        
     }
 
+    data_path = os.path.join(os.getcwd(), 'hyperparam') 
+    file_name_f1 = f'f1_{dataset}_v{version}_{"randomized" if randomized else ""}_{model_type}_{"multiclass" if multiclass else "binary"}_g{g}'
+    file_name_re = f're_{dataset}_v{version}_{"randomized" if randomized else ""}_{model_type}_{"multiclass" if multiclass else "binary"}_g{g}'
+
+    if os.path.exists(os.path.join(data_path, file_name_f1) + '.npy'):
+        print(f'File {file_name_f1}.npy already exists.')
+        return
     f1_score = np.zeros((len(numK), len(dimH)))
     re_score = np.zeros((len(numK), len(dimH)))
 
@@ -80,7 +82,7 @@ def main(dataset, version, randomized, model_type, multiclass, numEpochs, numK, 
     trainer = ModelTrainer(training_config, train_data, val_data, g=g)
     for idx_k, k in enumerate(numK):
         for idx_h, h in enumerate(dimH):
-            print(f'Validating {model_type} with g={g}, K={k}, H={h}')
+            print(f'Validating {model_type} with g={g}, K={k}, H={h} - {"randomized" if randomized else "non-randomized"} dataset')
             if model_type == 'E_GraphSAGE':
                 model = e_graphsage.E_GraphSAGE(numLayers=k,
                                             dim_node_embed=h,
@@ -104,9 +106,7 @@ def main(dataset, version, randomized, model_type, multiclass, numEpochs, numK, 
     os.remove(f'{data_path}-g{g}-val{("-randomized" if randomized else "")}.pkl')
     os.remove(f'{data_path}-g{g}-test{("-randomized" if randomized else "")}.pkl')
 
-    data_path = os.path.join(os.getcwd(), 'hyperparam') 
-    file_name_f1 = f'f1_{dataset}_v{version}_{"randomized" if randomized else ""}_{model_type}_{"multiclass" if multiclass else "binary"}_g{g}'
-    file_name_re = f're_{dataset}_v{version}_{"randomized" if randomized else ""}_{model_type}_{"multiclass" if multiclass else "binary"}_g{g}'
+    data_path = os.path.join(os.getcwd(), 'hyperparam')
     np.save(os.path.join(data_path, file_name_f1), f1_score)
     np.save(os.path.join(data_path, file_name_re), re_score)
 
@@ -121,19 +121,21 @@ def main(dataset, version, randomized, model_type, multiclass, numEpochs, numK, 
 if __name__ == "__main__":
     dataset = 'NF-BoT-IoT' #e.g., 'NF-BoT-IoT'
     version = 1
-    randomized = True
+    randomized_list = [True, False]
     model_type = 'E_GraphSAGE' #e.g., 'E_GraphSAGE', E_GraphSAGE_hEmbed
     multiclass = True
     numEpochs = 2000
     numRealizations = 5
-    numK = [2]
-    dimH = [64,128]
+    numK = [2,3]
+    dimH = [64,128,256]
 
     data_path = os.path.join(os.getcwd(), 'hyperparam') 
 
     if os.path.exists(data_path) == False:
         os.mkdir(data_path)
     for g in range(numRealizations):
-        main(dataset, version, randomized, model_type, multiclass, numEpochs, numK, dimH, g)
+        for randomized in randomized_list:
+            main(dataset, version, randomized, model_type, multiclass, numEpochs, numK, dimH, g)
     #pool = multiprocessing.Pool(processes=5)
-    #pool.starmap(main, [(dataset, version, randomized, model_type, multiclass, numEpochs, numK, dimH, g) for g in range(numRealizations)])
+    #pool.starmap(main, [(dataset, version, randomized, model_type, multiclass, numEpochs, numK, dimH, g) for g in range(numRealizations)
+    #                    for randomized in randomized_list])
