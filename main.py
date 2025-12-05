@@ -1,6 +1,6 @@
 from configuration import *
 
-from models import e_graphsage, fnn_model, e_graphsage_hembed
+from models import e_graphsage, fnn_model, e_graphsage_hembed, enhanced_e_graphsage
 from data import IoTDataset
 from train import ModelTrainer
 from tester import ModelTester
@@ -33,14 +33,62 @@ def main():
                                num_classes=len(train_data.classes),
                                )
 
-    model3 = e_graphsage_hembed.E_GraphSAGE_hEmbed(numLayers=2,
-                                                   dim_node_embed=96,       # Approximately equal parameter count as EGS
-                                                   num_edge_attr=train_data.num_features,
-                                                   num_classes=len(train_data.classes)
-                                                   )
+    # model3 = e_graphsage_hembed.E_GraphSAGE_hEmbed(numLayers=2,
+    #                                                dim_node_embed=96,       # Approximately equal parameter count as EGS
+    #                                                num_edge_attr=train_data.num_features,
+    #                                                num_classes=len(train_data.classes)
+    #                                                )
+
+    model3 = enhanced_e_graphsage.Enhanced_E_GraphSAGE(numLayers=2,
+                                                       dim_node_embed=128,
+                                                       num_edge_attr=train_data.num_features,
+                                                       num_classes=len(train_data.classes),
+                                                       )
+    model4 = enhanced_e_graphsage.Enhanced_E_GraphSAGE(numLayers=2,
+                                                       dim_node_embed=128,
+                                                       num_edge_attr=train_data.num_features,
+                                                       num_classes=len(train_data.classes),
+                                                       attention=False, gating=True, residual=True
+                                                       )
+    model5 = enhanced_e_graphsage.Enhanced_E_GraphSAGE(numLayers=2,
+                                                       dim_node_embed=128,
+                                                       num_edge_attr=train_data.num_features,
+                                                       num_classes=len(train_data.classes),
+                                                       attention=True, gating=False, residual=True
+                                                       )
+    model6 = enhanced_e_graphsage.Enhanced_E_GraphSAGE(numLayers=2,
+                                                       dim_node_embed=128,
+                                                       num_edge_attr=train_data.num_features,
+                                                       num_classes=len(train_data.classes),
+                                                       attention=True, gating=True, residual=False
+                                                       )
+    model7 = enhanced_e_graphsage.Enhanced_E_GraphSAGE(numLayers=2,
+                                                       dim_node_embed=128,
+                                                       num_edge_attr=train_data.num_features,
+                                                       num_classes=len(train_data.classes),
+                                                       attention=True, gating=False, residual=False
+                                                       )
+    model7 = enhanced_e_graphsage.Enhanced_E_GraphSAGE(numLayers=2,
+                                                       dim_node_embed=128,
+                                                       num_edge_attr=train_data.num_features,
+                                                       num_classes=len(train_data.classes),
+                                                       attention=False, gating=True, residual=False
+                                                       )
+    model8 = enhanced_e_graphsage.Enhanced_E_GraphSAGE(numLayers=2,
+                                                       dim_node_embed=128,
+                                                       num_edge_attr=train_data.num_features,
+                                                       num_classes=len(train_data.classes),
+                                                       attention=False, gating=False, residual=True
+                                                       )
+    model9 = enhanced_e_graphsage.Enhanced_E_GraphSAGE(numLayers=2,
+                                                       dim_node_embed=128,
+                                                       num_edge_attr=train_data.num_features,
+                                                       num_classes=len(train_data.classes),
+                                                       attention=False, gating=False, residual=False
+                                                       )
 
     print('\r' + ' ' * 50 + '\r', end='')
-    for model_t in [model, model2, model3]:
+    for model_t in [model, model2, model3, model4, model5, model6, model7, model8, model9]:
         print(f'Number of learnable parameters in {model_t.id}: {sum(p.numel() for p in model_t.parameters() if p.requires_grad)}')
 
     training_config = {
@@ -57,6 +105,12 @@ def main():
     trainer.train_model(model, True)
     trainer.train_model(model2, True)
     trainer.train_model(model3, True)
+    trainer.train_model(model4, True)
+    trainer.train_model(model5, True)
+    trainer.train_model(model6, True)
+    trainer.train_model(model7, True)
+    trainer.train_model(model8, True)
+    trainer.train_model(model9, True)
 
     tester = ModelTester(test_data, False)
     tester.test_model(model)

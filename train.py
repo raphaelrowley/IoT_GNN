@@ -222,8 +222,6 @@ class ModelTrainer:
                     val_graph = val_graph.to(self.device)
                     model.forward(val_graph)
                     logits = val_graph.edata['edge_pred']
-                    if ((epoch % 25) == 0):
-                        print(f"[Epoch {epoch}] logit mean: {logits.mean().item():.4f}, std: {logits.std().item():.4f}")
 
                     del val_graph      # Maybe unnecessary, but free up memory ASAP for large datasets
 
