@@ -1,0 +1,1086 @@
+Loading and preprocessing data…Done processing train.Done processing val.Done processing test.Initializing models…Number of edge attributes: 8
+                                                  Number of learnable parameters in E_GraphSAGE_K2_H128: 22282
+=================================================================
+Layer (type:depth-idx)                   Param #
+=================================================================
+E_GraphSAGE                              --
+├─Sequential: 1-1                        --
+│    └─E_GraphSAGE_Layer: 2-1            --
+│    │    └─Linear: 3-1                  2,176
+│    │    └─ReLU: 3-2                    --
+│    │    └─Dropout: 3-3                 --
+│    └─E_GraphSAGE_Layer: 2-2            --
+│    │    └─Linear: 3-4                  17,536
+│    │    └─ReLU: 3-5                    --
+├─Sequential: 1-2                        --
+│    └─Linear: 2-3                       2,570
+=================================================================
+Total params: 22,282
+Trainable params: 22,282
+Non-trainable params: 0
+=================================================================
+Number of learnable parameters in FCNN_K2: 27850
+=================================================================
+Layer (type:depth-idx)                   Param #
+=================================================================
+TestFNN                                  --
+├─Sequential: 1-1                        --
+│    └─Linear: 2-1                       1,152
+│    └─ReLU: 2-2                         --
+│    └─Dropout1d: 2-3                    --
+│    └─Linear: 2-4                       24,768
+│    └─ReLU: 2-5                         --
+│    └─Dropout1d: 2-6                    --
+├─Linear: 1-2                            1,930
+=================================================================
+Total params: 27,850
+Trainable params: 27,850
+Non-trainable params: 0
+=================================================================
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_attention_gated_res: 90650
+======================================================================
+Layer (type:depth-idx)                        Param #
+======================================================================
+Enhanced_E_GraphSAGE                          --
+├─Sequential: 1-1                             --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-1        --
+│    │    └─ReLU: 3-1                         --
+│    │    └─Linear: 3-2                       136
+│    │    └─Sequential: 3-3                   136
+│    │    └─Linear: 3-4                       1,152
+│    │    └─Linear: 3-5                       2,176
+│    │    └─Dropout: 3-6                      --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-2        --
+│    │    └─ReLU: 3-7                         --
+│    │    └─Linear: 3-8                       17,536
+│    │    └─Sequential: 3-9                   17,536
+│    │    └─Linear: 3-10                      16,512
+│    │    └─Linear: 3-11                      32,896
+├─Sequential: 1-2                             --
+│    └─Linear: 2-3                            2,570
+======================================================================
+Total params: 90,650
+Trainable params: 90,650
+Non-trainable params: 0
+======================================================================
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_gated_res: 76258
+======================================================================
+Layer (type:depth-idx)                        Param #
+======================================================================
+Enhanced_E_GraphSAGE                          --
+├─Sequential: 1-1                             --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-1        --
+│    │    └─ReLU: 3-1                         --
+│    │    └─Sequential: 3-2                   272
+│    │    └─Linear: 3-3                       1,152
+│    │    └─Linear: 3-4                       3,200
+│    │    └─Dropout: 3-5                      --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-2        --
+│    │    └─ReLU: 3-6                         --
+│    │    └─Sequential: 3-7                   18,632
+│    │    └─Linear: 3-8                       16,512
+│    │    └─Linear: 3-9                       33,920
+├─Sequential: 1-2                             --
+│    └─Linear: 2-3                            2,570
+======================================================================
+Total params: 76,258
+Trainable params: 76,258
+Non-trainable params: 0
+======================================================================
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_attention_res: 72978
+======================================================================
+Layer (type:depth-idx)                        Param #
+======================================================================
+Enhanced_E_GraphSAGE                          --
+├─Sequential: 1-1                             --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-1        --
+│    │    └─ReLU: 3-1                         --
+│    │    └─Linear: 3-2                       136
+│    │    └─Linear: 3-3                       1,152
+│    │    └─Linear: 3-4                       2,176
+│    │    └─Dropout: 3-5                      --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-2        --
+│    │    └─ReLU: 3-6                         --
+│    │    └─Linear: 3-7                       17,536
+│    │    └─Linear: 3-8                       16,512
+│    │    └─Linear: 3-9                       32,896
+├─Sequential: 1-2                             --
+│    └─Linear: 2-3                            2,570
+======================================================================
+Total params: 72,978
+Trainable params: 72,978
+Non-trainable params: 0
+======================================================================
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_attention_gated: 72986
+======================================================================
+Layer (type:depth-idx)                        Param #
+======================================================================
+Enhanced_E_GraphSAGE                          --
+├─Sequential: 1-1                             --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-1        --
+│    │    └─ReLU: 3-1                         --
+│    │    └─Linear: 3-2                       136
+│    │    └─Sequential: 3-3                   136
+│    │    └─Linear: 3-4                       2,176
+│    │    └─Dropout: 3-5                      --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-2        --
+│    │    └─ReLU: 3-6                         --
+│    │    └─Linear: 3-7                       17,536
+│    │    └─Sequential: 3-8                   17,536
+│    │    └─Linear: 3-9                       32,896
+├─Sequential: 1-2                             --
+│    └─Linear: 2-3                            2,570
+======================================================================
+Total params: 72,986
+Trainable params: 72,986
+Non-trainable params: 0
+======================================================================
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_attention: 55314
+======================================================================
+Layer (type:depth-idx)                        Param #
+======================================================================
+Enhanced_E_GraphSAGE                          --
+├─Sequential: 1-1                             --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-1        --
+│    │    └─ReLU: 3-1                         --
+│    │    └─Linear: 3-2                       136
+│    │    └─Linear: 3-3                       2,176
+│    │    └─Dropout: 3-4                      --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-2        --
+│    │    └─ReLU: 3-5                         --
+│    │    └─Linear: 3-6                       17,536
+│    │    └─Linear: 3-7                       32,896
+├─Sequential: 1-2                             --
+│    └─Linear: 2-3                            2,570
+======================================================================
+Total params: 55,314
+Trainable params: 55,314
+Non-trainable params: 0
+======================================================================
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_gated: 58594
+======================================================================
+Layer (type:depth-idx)                        Param #
+======================================================================
+Enhanced_E_GraphSAGE                          --
+├─Sequential: 1-1                             --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-1        --
+│    │    └─ReLU: 3-1                         --
+│    │    └─Sequential: 3-2                   272
+│    │    └─Linear: 3-3                       3,200
+│    │    └─Dropout: 3-4                      --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-2        --
+│    │    └─ReLU: 3-5                         --
+│    │    └─Sequential: 3-6                   18,632
+│    │    └─Linear: 3-7                       33,920
+├─Sequential: 1-2                             --
+│    └─Linear: 2-3                            2,570
+======================================================================
+Total params: 58,594
+Trainable params: 58,594
+Non-trainable params: 0
+======================================================================
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_res: 57354
+======================================================================
+Layer (type:depth-idx)                        Param #
+======================================================================
+Enhanced_E_GraphSAGE                          --
+├─Sequential: 1-1                             --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-1        --
+│    │    └─ReLU: 3-1                         --
+│    │    └─Linear: 3-2                       1,152
+│    │    └─Linear: 3-3                       3,200
+│    │    └─Dropout: 3-4                      --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-2        --
+│    │    └─ReLU: 3-5                         --
+│    │    └─Linear: 3-6                       16,512
+│    │    └─Linear: 3-7                       33,920
+├─Sequential: 1-2                             --
+│    └─Linear: 2-3                            2,570
+======================================================================
+Total params: 57,354
+Trainable params: 57,354
+Non-trainable params: 0
+======================================================================
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128: 39690
+======================================================================
+Layer (type:depth-idx)                        Param #
+======================================================================
+Enhanced_E_GraphSAGE                          --
+├─Sequential: 1-1                             --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-1        --
+│    │    └─ReLU: 3-1                         --
+│    │    └─Linear: 3-2                       3,200
+│    │    └─Dropout: 3-3                      --
+│    └─Enhanced_E_GraphSAGE_Layer: 2-2        --
+│    │    └─ReLU: 3-4                         --
+│    │    └─Linear: 3-5                       33,920
+├─Sequential: 1-2                             --
+│    └─Linear: 2-3                            2,570
+======================================================================
+Total params: 39,690
+Trainable params: 39,690
+Non-trainable params: 0
+======================================================================
+Number of learnable parameters in FCNN_K5: 53712
+=================================================================
+Layer (type:depth-idx)                   Param #
+=================================================================
+TestFNN                                  --
+├─Sequential: 1-1                        --
+│    └─Linear: 2-1                       162
+│    └─ReLU: 2-2                         --
+│    └─Dropout1d: 2-3                    --
+│    └─Linear: 2-4                       684
+│    └─ReLU: 2-5                         --
+│    └─Dropout1d: 2-6                    --
+│    └─Linear: 2-7                       2,664
+│    └─ReLU: 2-8                         --
+│    └─Dropout1d: 2-9                    --
+│    └─Linear: 2-10                      10,512
+│    └─ReLU: 2-11                        --
+│    └─Dropout1d: 2-12                   --
+│    └─Linear: 2-13                      37,120
+│    └─ReLU: 2-14                        --
+│    └─Dropout1d: 2-15                   --
+├─Linear: 1-2                            2,570
+=================================================================
+Total params: 53,712
+Trainable params: 53,712
+Non-trainable params: 0
+=================================================================
+Starting training…Model 01
+Model 02
+4230 MiB
+382 MiB
+---- after model2 ----
+---- after clear model2 ----
+Model 03
+Model 04
+Model 05
+Model 06
+Model 07
+Model 08
+Model 09
+Model 10
+Model 11
+Starting testing…Model 01
+Total Samples: 320674
+===== Multiclass Test Report =====
+== Analysis ==
+Precision: 0.143111
+Recall:    0.811083
+F1-score:  0.243294
+
+== Backdoor ==
+Precision: 0.097436
+Recall:    0.053521
+F1-score:  0.069091
+
+== Benign ==
+Precision: 0.999611
+Recall:    0.955416
+F1-score:  0.977014
+
+== DoS ==
+Precision: 0.220000
+Recall:    0.010913
+F1-score:  0.020794
+
+== Exploits ==
+Precision: 0.511193
+Recall:    0.364813
+F1-score:  0.425773
+
+== Fuzzers ==
+Precision: 0.356964
+Recall:    0.627943
+F1-score:  0.455176
+
+== Generic ==
+Precision: 0.244755
+Recall:    0.189019
+F1-score:  0.213306
+
+== Reconnaissance ==
+Precision: 0.631813
+Recall:    0.693811
+F1-score:  0.661362
+
+== Shellcode ==
+Precision: 0.037235
+Recall:    0.996337
+F1-score:  0.071787
+
+== Worms ==
+Precision: 0.006982
+Recall:    0.967742
+F1-score:  0.013863
+
+== weighted avg ==
+Precision: 0.973476
+Recall:    0.933593
+F1-score:  0.951377
+
+= Global Metrics =
+Accuracy:           0.933593
+Balanced Accuracy:  0.567060
+
+Confusion Matrix:
+[[   322      8      0      0      2      0      0      0      0     65]
+ [   268     19      2      0      6      8      0      0     40     12]
+ [    56     44 292580     11   1216   3909    469    967   6051    930]
+ [   310     21     24     11    129     71     51      6     34    351]
+ [   325     23     72     23   1804    334     53     18    288   2005]
+ [   318     24      2      2    222   2427     67      0    571    232]
+ [   325     30     12      3    149     33    210      2     49    298]
+ [   326     26      2      0      1     16      7   1704      0    374]
+ [     0      0      0      0      0      1      0      0    272      0]
+ [     0      0      0      0      0      0      1      0      0     30]]
+
+= Binary Metrics =
+TN, TP, FN, FP are derived from the confusion matrix.
+Benign is the negative class. The attack classes are positive.
+Total Samples: 320674
+TN: 322
+TP: 318349
+FN: 1928
+FP: 75
+
+Accuracy: 0.993754
+Balanced Accuracy: 0.902532
+FAR: 0.188917
+Recall: 0.993980
+Precision: 0.999764
+F1-score: 0.996864
+
+Report and confusion matrix recorded in:  /home/rowleyra/IoT_GNN/checkpoints/NF-UNSW-NB15-v1-randomized-multiclassE_GraphSAGE_K2_H128
+Model 02
+Total Samples: 320674
+===== Multiclass Test Report =====
+== Analysis ==
+Precision: 0.050074
+Recall:    0.682620
+F1-score:  0.093303
+
+== Backdoor ==
+Precision: 0.070410
+Recall:    0.222535
+F1-score:  0.106974
+
+== Benign ==
+Precision: 0.998802
+Recall:    0.748623
+F1-score:  0.855803
+
+== DoS ==
+Precision: 0.168317
+Recall:    0.033730
+F1-score:  0.056198
+
+== Exploits ==
+Precision: 0.085618
+Recall:    0.453994
+F1-score:  0.144067
+
+== Fuzzers ==
+Precision: 0.351869
+Recall:    0.584476
+F1-score:  0.439281
+
+== Generic ==
+Precision: 0.308834
+Recall:    0.374437
+F1-score:  0.338487
+
+== Reconnaissance ==
+Precision: 0.081604
+Recall:    0.699511
+F1-score:  0.146157
+
+== Shellcode ==
+Precision: 0.009869
+Recall:    0.996337
+F1-score:  0.019544
+
+== Worms ==
+Precision: 0.017146
+Recall:    1.000000
+F1-score:  0.033714
+
+== weighted avg ==
+Precision: 0.961758
+Recall:    0.737752
+F1-score:  0.827502
+
+= Global Metrics =
+Accuracy:           0.737752
+Balanced Accuracy:  0.579626
+
+Confusion Matrix:
+[[   271     83      0      3     25      2      4      0      8      1]
+ [   201     79      0      6      1      2     10      0     47      9]
+ [  3282    462 229253     89  23684   3750    278  18997  26214    224]
+ [   374     84     23     34    153     73    109     18     37    103]
+ [   545    109    229     52   2245    292    343     23    261    846]
+ [   235     98      0      8      9   2259    183    296    661    116]
+ [   267    100     19      8     99     37    416      1     55    109]
+ [   237    107      4      2      5      4      4   1718      6    369]
+ [     0      0      0      0      0      1      0      0    272      0]
+ [     0      0      0      0      0      0      0      0      0     31]]
+
+= Binary Metrics =
+TN, TP, FN, FP are derived from the confusion matrix.
+Benign is the negative class. The attack classes are positive.
+Total Samples: 320674
+TN: 271
+TP: 315136
+FN: 5141
+FP: 126
+
+Accuracy: 0.983575
+Balanced Accuracy: 0.833284
+FAR: 0.317380
+Recall: 0.983948
+Precision: 0.999600
+F1-score: 0.991713
+
+Report and confusion matrix recorded in:  /home/rowleyra/IoT_GNN/checkpoints/NF-UNSW-NB15-v1-randomized-multiclassFCNN_K2
+Model 03
+Model 04
+Model 05
+Total Samples: 320674
+===== Multiclass Test Report =====
+== Analysis ==
+Precision: 0.000000
+Recall:    0.000000
+F1-score:  0.000000
+
+== Backdoor ==
+Precision: 0.001107
+Recall:    1.000000
+F1-score:  0.002212
+
+== Benign ==
+Precision: 0.000000
+Recall:    0.000000
+F1-score:  0.000000
+
+== DoS ==
+Precision: 0.000000
+Recall:    0.000000
+F1-score:  0.000000
+
+== Exploits ==
+Precision: 0.000000
+Recall:    0.000000
+F1-score:  0.000000
+
+== Fuzzers ==
+Precision: 0.000000
+Recall:    0.000000
+F1-score:  0.000000
+
+== Generic ==
+Precision: 0.000000
+Recall:    0.000000
+F1-score:  0.000000
+
+== Reconnaissance ==
+Precision: 0.000000
+Recall:    0.000000
+F1-score:  0.000000
+
+== Shellcode ==
+Precision: 0.000000
+Recall:    0.000000
+F1-score:  0.000000
+
+== Worms ==
+Precision: 0.000000
+Recall:    0.000000
+F1-score:  0.000000
+
+== weighted avg ==
+Precision: 0.000001
+Recall:    0.001107
+F1-score:  0.000002
+
+= Global Metrics =
+Accuracy:           0.001107
+Balanced Accuracy:  0.100000
+
+Confusion Matrix:
+[[     0    397      0      0      0      0      0      0      0      0]
+ [     0    355      0      0      0      0      0      0      0      0]
+ [     0 306198      0      0      0      1      0     34      0      0]
+ [     0   1007      0      0      0      1      0      0      0      0]
+ [     0   4942      0      0      0      3      0      0      0      0]
+ [     0   3865      0      0      0      0      0      0      0      0]
+ [     0   1110      0      0      0      0      0      1      0      0]
+ [     0   2456      0      0      0      0      0      0      0      0]
+ [     0    273      0      0      0      0      0      0      0      0]
+ [     0     31      0      0      0      0      0      0      0      0]]
+
+= Binary Metrics =
+TN, TP, FN, FP are derived from the confusion matrix.
+Benign is the negative class. The attack classes are positive.
+Total Samples: 320674
+TN: 0
+TP: 320277
+FN: 0
+FP: 397
+
+Accuracy: 0.998762
+Balanced Accuracy: 0.500000
+FAR: 1.000000
+Recall: 1.000000
+Precision: 0.998762
+F1-score: 0.999381
+
+Report and confusion matrix recorded in:  /home/rowleyra/IoT_GNN/checkpoints/NF-UNSW-NB15-v1-randomized-multiclassEnhanced_E_GraphSAGE_K2_H128_attention_res
+Model 06
+Total Samples: 320674
+===== Multiclass Test Report =====
+== Analysis ==
+Precision: 0.109389
+Recall:    0.924433
+F1-score:  0.195629
+
+== Backdoor ==
+Precision: 0.087558
+Recall:    0.053521
+F1-score:  0.066434
+
+== Benign ==
+Precision: 0.999604
+Recall:    0.955106
+F1-score:  0.976848
+
+== DoS ==
+Precision: 0.333333
+Recall:    0.007937
+F1-score:  0.015504
+
+== Exploits ==
+Precision: 0.556070
+Recall:    0.364004
+F1-score:  0.439990
+
+== Fuzzers ==
+Precision: 0.352638
+Recall:    0.655369
+F1-score:  0.458545
+
+== Generic ==
+Precision: 0.151235
+Recall:    0.176418
+F1-score:  0.162858
+
+== Reconnaissance ==
+Precision: 0.731017
+Recall:    0.693811
+F1-score:  0.711928
+
+== Shellcode ==
+Precision: 0.037899
+Recall:    0.996337
+F1-score:  0.073020
+
+== Worms ==
+Precision: 0.006763
+Recall:    0.709677
+F1-score:  0.013398
+
+== weighted avg ==
+Precision: 0.974849
+Recall:    0.933677
+F1-score:  0.951614
+
+= Global Metrics =
+Accuracy:           0.933677
+Balanced Accuracy:  0.553661
+
+Confusion Matrix:
+[[   367      8      0      0      2      0      0      0      0     20]
+ [   271     19      2      0      9      5      0      0     40      9]
+ [   489     67 292485     14   1035   4176    919    601   5935    512]
+ [   365     21     23      8    128     71     53      6     31    302]
+ [   675     22     73      2   1800    345     65     18    280   1665]
+ [   395     24      3      0    116   2533     56      0    571    167]
+ [   381     30     13      0    146     36    196      2     48    259]
+ [   403     26      2      0      1     16      7   1704      0    297]
+ [     0      0      0      0      0      1      0      0    272      0]
+ [     9      0      0      0      0      0      0      0      0     22]]
+
+= Binary Metrics =
+TN, TP, FN, FP are derived from the confusion matrix.
+Benign is the negative class. The attack classes are positive.
+Total Samples: 320674
+TN: 367
+TP: 317289
+FN: 2988
+FP: 30
+
+Accuracy: 0.990589
+Balanced Accuracy: 0.957552
+FAR: 0.075567
+Recall: 0.990671
+Precision: 0.999905
+F1-score: 0.995267
+
+Report and confusion matrix recorded in:  /home/rowleyra/IoT_GNN/checkpoints/NF-UNSW-NB15-v1-randomized-multiclassEnhanced_E_GraphSAGE_K2_H128_attention_gated
+Model 07
+Total Samples: 320674
+===== Multiclass Test Report =====
+== Analysis ==
+Precision: 0.122939
+Recall:    0.863980
+F1-score:  0.215249
+
+== Backdoor ==
+Precision: 0.091787
+Recall:    0.053521
+F1-score:  0.067616
+
+== Benign ==
+Precision: 0.999624
+Recall:    0.955073
+F1-score:  0.976841
+
+== DoS ==
+Precision: 0.183908
+Recall:    0.015873
+F1-score:  0.029224
+
+== Exploits ==
+Precision: 0.568035
+Recall:    0.372295
+F1-score:  0.449792
+
+== Fuzzers ==
+Precision: 0.354911
+Recall:    0.655369
+F1-score:  0.460462
+
+== Generic ==
+Precision: 0.150376
+Recall:    0.180018
+F1-score:  0.163867
+
+== Reconnaissance ==
+Precision: 0.759697
+Recall:    0.693811
+F1-score:  0.725261
+
+== Shellcode ==
+Precision: 0.037673
+Recall:    0.996337
+F1-score:  0.072601
+
+== Worms ==
+Precision: 0.007303
+Recall:    0.903226
+F1-score:  0.014489
+
+== weighted avg ==
+Precision: 0.974849
+Recall:    0.933755
+F1-score:  0.951955
+
+= Global Metrics =
+Accuracy:           0.933755
+Balanced Accuracy:  0.568950
+
+Confusion Matrix:
+[[   343      8      0      0      2      0      0      0      0     44]
+ [   271     19      0      0      9      5      0      0     40     11]
+ [   287     56 292475     27   1001   4217    954    513   5969    734]
+ [   338     21     25     16    125     66     50      6     33    328]
+ [   484     23     69     35   1841    270     64     18    286   1855]
+ [   351     24      2      2    116   2533     55      0    571    211]
+ [   346     30     12      7    146     29    200      2     49    290]
+ [   367     26      2      0      1     16      7   1704      0    333]
+ [     0      0      0      0      0      1      0      0    272      0]
+ [     3      0      0      0      0      0      0      0      0     28]]
+
+= Binary Metrics =
+TN, TP, FN, FP are derived from the confusion matrix.
+Benign is the negative class. The attack classes are positive.
+Total Samples: 320674
+TN: 343
+TP: 317830
+FN: 2447
+FP: 54
+
+Accuracy: 0.992201
+Balanced Accuracy: 0.928170
+FAR: 0.136020
+Recall: 0.992360
+Precision: 0.999830
+F1-score: 0.996081
+
+Report and confusion matrix recorded in:  /home/rowleyra/IoT_GNN/checkpoints/NF-UNSW-NB15-v1-randomized-multiclassEnhanced_E_GraphSAGE_K2_H128_attention
+Model 08
+Total Samples: 320674
+===== Multiclass Test Report =====
+== Analysis ==
+Precision: 0.107646
+Recall:    0.808564
+F1-score:  0.189997
+
+== Backdoor ==
+Precision: 0.130719
+Recall:    0.225352
+F1-score:  0.165460
+
+== Benign ==
+Precision: 0.999602
+Recall:    0.952288
+F1-score:  0.975372
+
+== DoS ==
+Precision: 0.227273
+Recall:    0.009921
+F1-score:  0.019011
+
+== Exploits ==
+Precision: 0.570380
+Recall:    0.345804
+F1-score:  0.430568
+
+== Fuzzers ==
+Precision: 0.306993
+Recall:    0.655369
+F1-score:  0.418125
+
+== Generic ==
+Precision: 0.253769
+Recall:    0.181818
+F1-score:  0.211851
+
+== Reconnaissance ==
+Precision: 0.615162
+Recall:    0.693811
+F1-score:  0.652124
+
+== Shellcode ==
+Precision: 0.037538
+Recall:    0.996337
+F1-score:  0.072350
+
+== Worms ==
+Precision: 0.006796
+Recall:    0.709677
+F1-score:  0.013464
+
+== weighted avg ==
+Precision: 0.973698
+Recall:    0.930777
+F1-score:  0.949396
+
+= Global Metrics =
+Accuracy:           0.930777
+Balanced Accuracy:  0.557894
+
+Confusion Matrix:
+[[   321     54      0      0      2      0      0      0      0     20]
+ [   210     80      2      0      7      7      0      0     40      9]
+ [   492     90 291622      9    914   5164    394   1040   6000    508]
+ [   320     65     24     10    118     83     51      6     32    299]
+ [   607     87     74     20   1710    400     87     18    282   1660]
+ [   355     64      2      2    116   2533     55      0    571    167]
+ [   323     88     12      3    130     47    202      2     49    255]
+ [   345     84      2      0      1     16      7   1704      0    297]
+ [     0      0      0      0      0      1      0      0    272      0]
+ [     9      0      0      0      0      0      0      0      0     22]]
+
+= Binary Metrics =
+TN, TP, FN, FP are derived from the confusion matrix.
+Benign is the negative class. The attack classes are positive.
+Total Samples: 320674
+TN: 321
+TP: 317616
+FN: 2661
+FP: 76
+
+Accuracy: 0.991465
+Balanced Accuracy: 0.900128
+FAR: 0.191436
+Recall: 0.991692
+Precision: 0.999761
+F1-score: 0.995710
+
+Report and confusion matrix recorded in:  /home/rowleyra/IoT_GNN/checkpoints/NF-UNSW-NB15-v1-randomized-multiclassEnhanced_E_GraphSAGE_K2_H128_gated
+Model 09
+Total Samples: 320674
+===== Multiclass Test Report =====
+== Analysis ==
+Precision: 0.000000
+Recall:    0.000000
+F1-score:  0.000000
+
+== Backdoor ==
+Precision: 0.113170
+Recall:    0.808451
+F1-score:  0.198547
+
+== Benign ==
+Precision: 0.999604
+Recall:    0.955762
+F1-score:  0.977192
+
+== DoS ==
+Precision: 0.188679
+Recall:    0.009921
+F1-score:  0.018850
+
+== Exploits ==
+Precision: 0.581501
+Recall:    0.363600
+F1-score:  0.447431
+
+== Fuzzers ==
+Precision: 0.361547
+Recall:    0.655369
+F1-score:  0.466010
+
+== Generic ==
+Precision: 0.219136
+Recall:    0.191719
+F1-score:  0.204513
+
+== Reconnaissance ==
+Precision: 0.632047
+Recall:    0.693811
+F1-score:  0.661491
+
+== Shellcode ==
+Precision: 0.037825
+Recall:    0.996337
+F1-score:  0.072883
+
+== Worms ==
+Precision: 0.006995
+Recall:    0.967742
+F1-score:  0.013889
+
+== weighted avg ==
+Precision: 0.974264
+Recall:    0.934073
+F1-score:  0.951819
+
+= Global Metrics =
+Accuracy:           0.934073
+Balanced Accuracy:  0.564271
+
+Confusion Matrix:
+[[     0    330      0      0      2      0      0      0      0     65]
+ [     0    287      2      0      6      8      0      0     40     12]
+ [    37    193 292686     16    900   4001    564    966   5947    923]
+ [     0    331     24     10    125     77     52      6     32    351]
+ [     0    346     74     24   1798    335     66     18    280   2004]
+ [     0    342      2      0    116   2533     69      0    571    232]
+ [     0    355     12      3    144     35    213      2     49    298]
+ [     0    352      2      0      1     16      7   1704      0    374]
+ [     0      0      0      0      0      1      0      0    272      0]
+ [     0      0      0      0      0      0      1      0      0     30]]
+
+= Binary Metrics =
+TN, TP, FN, FP are derived from the confusion matrix.
+Benign is the negative class. The attack classes are positive.
+Total Samples: 320674
+TN: 0
+TP: 320240
+FN: 37
+FP: 397
+
+Accuracy: 0.998647
+Balanced Accuracy: 0.499942
+FAR: 1.000000
+Recall: 0.999884
+Precision: 0.998762
+F1-score: 0.999323
+
+Report and confusion matrix recorded in:  /home/rowleyra/IoT_GNN/checkpoints/NF-UNSW-NB15-v1-randomized-multiclassEnhanced_E_GraphSAGE_K2_H128_res
+Model 10
+Total Samples: 320674
+===== Multiclass Test Report =====
+== Analysis ==
+Precision: 0.147043
+Recall:    0.695214
+F1-score:  0.242744
+
+== Backdoor ==
+Precision: 0.141093
+Recall:    0.225352
+F1-score:  0.173536
+
+== Benign ==
+Precision: 0.999607
+Recall:    0.955175
+F1-score:  0.976886
+
+== DoS ==
+Precision: 0.211538
+Recall:    0.010913
+F1-score:  0.020755
+
+== Exploits ==
+Precision: 0.555591
+Recall:    0.350657
+F1-score:  0.429953
+
+== Fuzzers ==
+Precision: 0.353179
+Recall:    0.655369
+F1-score:  0.459002
+
+== Generic ==
+Precision: 0.216685
+Recall:    0.180018
+F1-score:  0.196657
+
+== Reconnaissance ==
+Precision: 0.646434
+Recall:    0.693811
+F1-score:  0.669285
+
+== Shellcode ==
+Precision: 0.036987
+Recall:    0.996337
+F1-score:  0.071326
+
+== Worms ==
+Precision: 0.007125
+Recall:    1.000000
+F1-score:  0.014149
+
+== weighted avg ==
+Precision: 0.974153
+Recall:    0.933493
+F1-score:  0.951483
+
+= Global Metrics =
+Accuracy:           0.933493
+Balanced Accuracy:  0.576285
+
+Confusion Matrix:
+[[   276     54      0      0      2      0      0      0      0     65]
+ [   207     80      2      0      8      6      0      0     40     12]
+ [    56     45 292506     13   1010   4103    544    906   6103    947]
+ [   266     65     24     11    116     83     49      6     33    355]
+ [   259     87     73     23   1734    389     68     18    286   2008]
+ [   278     64      2      2    116   2533     55      0    571    244]
+ [   267     88     12      3    134     41    200      2     49    315]
+ [   268     84      2      0      1     16      7   1704      0    374]
+ [     0      0      0      0      0      1      0      0    272      0]
+ [     0      0      0      0      0      0      0      0      0     31]]
+
+= Binary Metrics =
+TN, TP, FN, FP are derived from the confusion matrix.
+Benign is the negative class. The attack classes are positive.
+Total Samples: 320674
+TN: 276
+TP: 318676
+FN: 1601
+FP: 121
+
+Accuracy: 0.994630
+Balanced Accuracy: 0.845108
+FAR: 0.304786
+Recall: 0.995001
+Precision: 0.999620
+F1-score: 0.997305
+
+Report and confusion matrix recorded in:  /home/rowleyra/IoT_GNN/checkpoints/NF-UNSW-NB15-v1-randomized-multiclassEnhanced_E_GraphSAGE_K2_H128
+Model 11
+Total Samples: 320674
+===== Multiclass Test Report =====
+== Analysis ==
+Precision: 0.118610
+Recall:    0.748111
+F1-score:  0.204757
+
+== Backdoor ==
+Precision: 0.044118
+Recall:    0.076056
+F1-score:  0.055843
+
+== Benign ==
+Precision: 0.994575
+Recall:    0.582520
+F1-score:  0.734718
+
+== DoS ==
+Precision: 0.077922
+Recall:    0.047619
+F1-score:  0.059113
+
+== Exploits ==
+Precision: 0.028619
+Recall:    0.206876
+F1-score:  0.050283
+
+== Fuzzers ==
+Precision: 0.337900
+Recall:    0.516947
+F1-score:  0.408673
+
+== Generic ==
+Precision: 0.008043
+Recall:    0.472547
+F1-score:  0.015816
+
+== Reconnaissance ==
+Precision: 0.511976
+Recall:    0.348127
+F1-score:  0.414445
+
+== Shellcode ==
+Precision: 0.009591
+Recall:    0.952381
+F1-score:  0.018991
+
+== Worms ==
+Precision: 0.016578
+Recall:    1.000000
+F1-score:  0.032614
+
+== weighted avg ==
+Precision: 0.958700
+Recall:    0.572079
+F1-score:  0.711082
+
+= Global Metrics =
+Accuracy:           0.572079
+Balanced Accuracy:  0.495118
+
+Confusion Matrix:
+[[   297     14      0      2      0      0     71      0      4      9]
+ [   254     27      0      8      0      1     12      0     36     17]
+ [   438    272 178387    362  34689   3620  62067    255  25969    174]
+ [   297     30     27     48     25     56    370      9     30    116]
+ [   307     82     64    176   1023    206   2017      4    179    887]
+ [   304     81      0      8      0   1998    205    546    602    121]
+ [   299     62     15      9      7     27    525      1     24    142]
+ [   308     32    867      2      1      5      9    855      4    373]
+ [     0     12      0      1      0      0      0      0    260      0]
+ [     0      0      0      0      0      0      0      0      0     31]]
+
+= Binary Metrics =
+TN, TP, FN, FP are derived from the confusion matrix.
+Benign is the negative class. The attack classes are positive.
+Total Samples: 320674
+TN: 297
+TP: 318070
+FN: 2207
+FP: 100
+
+Accuracy: 0.992806
+Balanced Accuracy: 0.870610
+FAR: 0.251889
+Recall: 0.993109
+Precision: 0.999686
+F1-score: 0.996387
+
+Report and confusion matrix recorded in:  /home/rowleyra/IoT_GNN/checkpoints/NF-UNSW-NB15-v1-randomized-multiclassFCNN_K5

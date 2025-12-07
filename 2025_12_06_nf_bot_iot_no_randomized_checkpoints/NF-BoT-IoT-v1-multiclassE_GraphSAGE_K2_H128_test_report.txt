@@ -1,0 +1,57 @@
+===== Multiclass Test Report =====
+== Benign ==
+Precision: 0.177337
+Recall:    0.964180
+F1-score:  0.299574
+
+== DDoS ==
+Precision: 0.195122
+Recall:    0.000933
+F1-score:  0.001857
+
+== DoS ==
+Precision: 0.395031
+Recall:    0.994294
+F1-score:  0.565422
+
+== Reconnaissance ==
+Precision: 0.997792
+Recall:    0.445690
+F1-score:  0.616157
+
+== Theft ==
+Precision: 0.008477
+Recall:    0.977778
+F1-score:  0.016809
+
+== weighted avg ==
+Precision: 0.870077
+Recall:    0.466177
+F1-score:  0.556903
+
+= Global Metrics =
+Accuracy:           0.466177
+Balanced Accuracy:  0.676575
+
+Confusion Matrix:
+[[ 2288     3     1    60    21]
+ [    8     8  8525    15    17]
+ [    3    18  8539    12    16]
+ [10603     9  4551 41114 35971]
+ [    0     3     0     4   308]]
+
+= Binary Metrics =
+TN, TP, FN, FP are derived from the confusion matrix.
+Benign is the negative class. The attack classes are positive.
+Total Samples: 112097
+TN: 2288
+TP: 99110
+FN: 10614
+FP: 85
+
+Accuracy: 0.904556
+Balanced Accuracy: 0.933723
+FAR: 0.035820
+Recall: 0.903266
+Precision: 0.999143
+F1-score: 0.948789
