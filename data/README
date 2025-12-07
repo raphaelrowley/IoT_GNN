@@ -1,26 +1,8 @@
 Datasets can be found at: https://drive.google.com/drive/folders/14t41P09gXTsCqPx3YFN1Pruwb2eZQrkT?usp=share_link
-The NF-BoT-IoT-v1 dataset is the dataset we chose to use for our project.
+
+The NF-BoT-IoT-v1 dataset is the dataset we chose to use for our project. Download it from the Google Drive and place the CSV in this directory.
 
 The v1 datasets are from:
-@inproceedings{sarhan2021netflow,
-title = {{Netflow Datasets for Machine Learning-based Network Intrusion Detection Systems}},
-author = {Mohanad Sarhan and Siamak Layeghy and Nour Moustafa and Marius Portmann}
-year = {2021},
-booktitle = {Big Data Technologies and Applications: 10th EAI International Conference, BDTA 2020, and 13th EAI International Conference on Wireless Internet, WiCON 2020, Virtual Event, December 11, 2020, Proceedings 10},
-pages = {117--135},
-organization = {Springer International Publishing}
-url = {https://doi.org/10.1007/978-3-030-72802-1_9}
-}
-
-The v2 datasets are from:
-@article{sarhan2022towards,
-title = {Towards a Standard Feature Set for Network Intrusion Detection System Datasets},
-author = {Mohanad Sarhan and Siamak Layeghy and Marius Portmann}
-year = {2022},
-journal = {Mobile networks and applications},
-pages = {1--14},
-publisher = {Springer US},
-url = {https://doi.org/10.1007/s11036-021-01843-0}
-}
+[1] M. Sarhan, S. Layeghy, N. Moustafa, and M. Portmann, “NetFlow Datasets for Machine Learning-Based Network Intrusion Detection Systems,” in Big Data Technologies and Applications, vol. 371, Z. Deze, H. Huang, R. Hou, S. Rho, and N. Chilamkurti, Eds., in Lecture Notes of the Institute for Computer Sciences, Social Informatics and Telecommunications Engineering, vol. 371. , Cham: Springer International Publishing, 2021, pp. 117–135. doi: 10.1007/978-3-030-72802-1_9.
 
 They can originally be downloaded from: https://staff.itee.uq.edu.au/marius/NIDS_datasets/
