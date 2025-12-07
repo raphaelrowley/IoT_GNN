@@ -1,0 +1,44 @@
+
+Loading and preprocessing data…
+Done processing train.
+Done processing val.
+Done processing test.
+Initializing models…
+                                                  
+Number of learnable parameters in E_GraphSAGE_K2_H128: 20997
+Number of learnable parameters in FCNN_K2: 26885
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_attention_gated_res: 89365
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_gated_res: 74973
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_attention_res: 71693
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_attention_gated: 71701
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_attention: 54029
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_gated: 57309
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128_res: 56069
+Number of learnable parameters in Enhanced_E_GraphSAGE_K2_H128: 38405
+Number of learnable parameters in FCNN_K5: 52427
+=================================================================
+Layer (type:depth-idx)                   Param #
+=================================================================
+TestFNN                                  --
+├─Sequential: 1-1                        --
+│    └─Linear: 2-1                       162
+│    └─ReLU: 2-2                         --
+│    └─Dropout1d: 2-3                    --
+│    └─Linear: 2-4                       684
+│    └─ReLU: 2-5                         --
+│    └─Dropout1d: 2-6                    --
+│    └─Linear: 2-7                       2,664
+│    └─ReLU: 2-8                         --
+│    └─Dropout1d: 2-9                    --
+│    └─Linear: 2-10                      10,512
+│    └─ReLU: 2-11                        --
+│    └─Dropout1d: 2-12                   --
+│    └─Linear: 2-13                      37,120
+│    └─ReLU: 2-14                        --
+│    └─Dropout1d: 2-15                   --
+├─Linear: 1-2                            1,285
+=================================================================
+Total params: 52,427
+Trainable params: 52,427
+Non-trainable params: 0
+=================================================================
