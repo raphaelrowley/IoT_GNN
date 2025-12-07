@@ -32,8 +32,8 @@ class IoTDataset(torch.utils.data.Dataset):
                  split='train',
                  multiclass=False,
                  randomize_source_ip=True,
-                 test_size=0.2,  # TODO do we want to keep test size and val size fixed?
-                 val_size=0.1,
+                 test_size=0.2,  # Fixed for this project
+                 val_size=0.1,   # Fixed for this project
                  data_parent_dir=None,
                  relabel_nodes=False,
                  g = None

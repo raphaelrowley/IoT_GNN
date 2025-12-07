@@ -271,7 +271,6 @@ class ModelTrainer:
                 })
                 self.set_checkpoint(epoch, model, train_risk, val_risk, progress_reports)
 
-        # TODO: do a small print of the checkpoint path.
         plt.figure('Risk', figsize=(7, 5))
         plt.plot([i + 1 for i in range(self.num_epochs)], train_risk, label='train')
         plt.plot([i + 1 for i in range(self.num_epochs)], val_risk, label='validation')

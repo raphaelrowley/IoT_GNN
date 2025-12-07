@@ -436,12 +436,3 @@ class ModelTester:
                 plt.close()
 
                 print("Report and confusion matrix recorded in: ", self.checkpoint_path)
-                
-
-
-
-
-
-    # TODO: Load a pre-trained model?
-    # TODO: Test many models at once.    
-    # TODO: Add the methods for pre-trained model.
