@@ -28,15 +28,15 @@ def main():
     USE_CHECKPOINTS = False
     # ------------------------------------------------------------------------
 
-    print('\rLoading and preprocessing data…', end='')
+    print('Loading and preprocessing data…')
     train_data = IoTDataset(**dataset_config)
-    print("\rDone processing train.", end='')
+    print("Done processing train.")
     val_data = IoTDataset(**dataset_config, split='val')
-    print("\rDone processing val.", end='')
+    print("Done processing val.")
     test_data = IoTDataset(**dataset_config, split='test')
-    print("\rDone processing test.", end='')
+    print("Done processing test.")
 
-    print('\rInitializing models…', end='')
+    print('Initializing models…')
     egs_baseline = e_graphsage.E_GraphSAGE(numLayers=2,
                                            dim_node_embed=128,
                                            num_edge_attr=train_data.num_features,
@@ -62,7 +62,7 @@ def main():
                                    num_classes=len(train_data.classes),
                                    )
 
-    print('\rStarting training…', end='')
+    print('Starting training…')
     trainer = ModelTrainer(training_config, train_data, val_data)
 
     for model in [egs_baseline, fnn_baseline, egs_enhanced, dids_model]:
