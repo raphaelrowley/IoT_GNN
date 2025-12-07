@@ -23,15 +23,15 @@ def main():
         'relabel_nodes': False,
     }
 
-    print('\rLoading and preprocessing data…', end='')
+    print('Loading and preprocessing data…', end='')
     train_data = IoTDataset(**dataset_config)
-    print("\rDone processing train.", end='')
+    print("Done processing train.", end='')
     val_data = IoTDataset(**dataset_config, split='val')
-    print("\rDone processing val.", end='')
+    print("Done processing val.", end='')
     test_data = IoTDataset(**dataset_config, split='test')
-    print("\rDone processing test.", end='')
+    print("Done processing test.", end='')
 
-    print('\rInitializing models…', end='')
+    print('Initializing models…', end='')
 
     print(f"Number of edge attributes: {train_data.num_features}")
 
@@ -102,7 +102,6 @@ def main():
                                                        attention=False, gating=False, residual=False
                                                        )
 
-    print('\r' + ' ' * 50 + '\r', end='')
     for model_t in [model, model2, model3, model4, model5, model6, model7, model8, model9, model10, model11]:
         print(f'Number of learnable parameters in {model_t.id}: {sum(p.numel() for p in model_t.parameters() if p.requires_grad)}')
         summary(model_t)
@@ -115,7 +114,7 @@ def main():
         'lr_sched_patience': 100,
     }
 
-    print('\rStarting training…', end='')
+    print('Starting training…', end='')
     trainer = ModelTrainer(training_config, train_data, val_data)
     print("Model 01")
     trainer.train_model(model, False)
@@ -165,7 +164,7 @@ def main():
     torch.cuda.empty_cache()
 
     tester = ModelTester(test_data, True)
-    print('\rStarting testing…', end='')
+    print('Starting testing…', end='')
     print("Model 01")
     tester.test_model(model)
     model.to("cpu")
