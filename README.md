@@ -59,7 +59,6 @@ All file names are prefixed with ```…```, which contains the model identifier 
 
 Our provided checkpoints can be overwritten when calling the main script with ```USE_CHECKPOINTS = False```
 
-#### Executing the script
 We have provided checkpoints for the datasets  
 - ````'NF-BoT-IoT'```` (version 1, randomized and non-randomized IPs)
 - ```'NF-ToN-IoT'``` (version 1, randomized IPs)
@@ -71,7 +70,7 @@ For each of these datasets, checkpoints are provided for multiclass classificati
 - Baseline fully connected FNN with 2 hidden layers and hidden layer dimensions of 128 and 192.
 - DIDS-inspired FNN with 5 hidden layers and hidden layer widths of 18, 36, 72, 144, and 256.
 
-###### Executing the script
+#### Executing the script
 To execute the script, call the following:
 
 ```bash
