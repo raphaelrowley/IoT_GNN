@@ -55,9 +55,17 @@ The relevant parameters are set in the main function, and they are:
     dimH: int, specifying the hidden dimension size in EGS
 }
 The results, namely class-weighted recall and F1-score, are saved in the 'hyperparam' directory. For each run, they correspond to the metrics obtained on the validation set for the epoch with the lowest validation loss. Observe that even for the non-randomized case, we still have multiple runs with different random seeds, as they affect the initialization of the model weights.
+After setting the relevant parameters, the script can be run as follows:
+```bash
+(iot_env)$ python hyperparameters.py
+```
 
 ### getResults-hyperparameter.py
 This script is used to read the results obtained from the hyperparameter study for EGS and print the results for all parameter combinations. For a given set of parameters, the printed results consider the mean, standard deviation, minimum, and maximum of the class-weighted recall and F1-score over all runs. The set of relevant parameters to read the results are similar to the hyperparameters.py script.
+After setting the relevant parameters, the script can be run as follows:
+```bash
+(iot_env)$ python getResults-hyperparameter.py
+```
 
 ### data_info.py
 This script is used to study the dataset of interest, that is, NF-BoT-IoT version 1. The relevant parameters for this script are:
@@ -70,6 +78,11 @@ This script is used to study the dataset of interest, that is, NF-BoT-IoT versio
     random_seed: int, specifying the random seed used for randomization of source IPs (if applicable)
 }
 In this script, we print important information on the dataset, such as the number of samples, number of features, data type of each feature and so on. Regarding the associated graph, we print information such as the number of nodes, number of edges, degree distribution. More importantly, we check whether or not the graph has cycles. If yes, we print the longest path found in the graph. This is important to understand whether multi-hop message passing can be effective in this graph.
+
+After setting the relevant parameters, the script can be run as follows:
+```bash
+(iot_env)$ python data_info.py
+```
 
 ### final_tests.py
 This script is used to train and test all of our different GNNs in one script. It was used to obtain our final results on the test set for NF-BoT-IoT-v1, as well as the other datasets. By default, this script executes training and testing on a GPU. This is set in the script at line 109 for training and at line 166 for testing.
