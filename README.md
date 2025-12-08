@@ -30,6 +30,21 @@ To run a notebook using iot_env, select the iot_env kernel to run the ipynb.
 ### iot.ipynb
 ### main.py
 ### hyperparameters.py
+In this script, we run the code to execute the hyperparameter study for EGS.
+The relevant parameters are set in the main function, and they are:
+{
+    dataset: str, specifying the name of the dataset (for this study, we only use 'NF-BoT-IoT')
+    version: int, specifying the version of the dataset (for this study, we only use version 1)
+    randomized_list: list of bool, specifying whether to randomize source IPs or not
+    model_type: str, specifying the type of GNN model to use (for this study, we only use EGS, i.e., 'E_GraphSAGE')
+    multiclass: bool, specifying whether the task is multiclass classification (for this study, we use True)
+    numEpochs: int, specifying the number of training epochs
+    numRealizations: int, specifying the number of runs for experiments, where the random seed is different for each run
+    numK: int, specifying the number of neighbors to consider in EGS
+    dimH: int, specifying the hidden dimension size in the EGS
+}
+The results, namely class-weighted recall and F1-score, are saved in the 'hyperparam' directory. These results are obtained by averaging the metrics over all runs for each hyperparameter combination. For each run, they correspond to the metrics obtained on the validation set for the epoch with the lowest validation loss.
+
 ### getResults-hyperparameter.py
 ### data_info.py
 ### final_tests.py
