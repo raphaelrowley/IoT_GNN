@@ -78,7 +78,7 @@ The script first sets the dataset_config dict and loads the training, validation
 
 The recommended way of running:
 ```bash
-(iot_env)$ python final_tests.py
+(iot_env)$ python final_tests.py > final_test.log
 ```  
 **Note:** as stated in the script, the conda environment has to be updated to use this script (if the environment was created with the manual steps).  
 ```bash
