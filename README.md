@@ -40,6 +40,32 @@ This notebook serves as an example of how to use the different classes and modul
 
 ### main.py
 
+Similar to ```iot.ipynb```, this script can be used to preprocess and load different datasets, initializing models, training and evaluating them.
+At the top of the main function, the dictionary ```dataset_config``` contains all necessary parameters to configure the dataset. Please refer to the docstrings of class ```IoTDataset``` for a detailed description of the parameters.
+The dictionary ```training_config``` sets all hyperparameters for the training loop. A description can be found in the docstrings of class ```ModelTrainer```.
+
+The script initializes all models used in our presentation (the E-GraphSAGE baseline model, our 2 hidden layer FNN model, our enhanced E-GraphSAGE model and a DIDS-inspired FNN). 
+The hyperparameters of these models, such as number of layers or the dimension of the node embeddings, can be changed as desired.
+
+###### Checkpoints 
+The boolean ```USE_CHECKPOINTS``` controls whether the ```ModelTrainer``` uses existing checkpoints which we provided in the directory ```checkpoints```. 
+If ```ModelTrainer.train_model(model, use_checkpoint=True)``` is called, and valid checkpoints for the model and the dataset are available, the training loop automatically loads and continues from them.
+
+If the number of epochs is kept at 300, the training loop automatically terminates after loading the weights into the model and generates learning curves ```…_risk.png``` and ```…_classification.png``` in ```checkpoints```, showing how the empirical risk and the classification metrics (precision, recall, F1), respectively, developed during training.
+
+The ```ModelTester``` finally generates a ```…_test_report.txt``` and the ```confusion_matrix.png``` in ```checkpoints```.
+
+All file names are prefixed with ```…```, which contains the model identifier and the dataset ID (e.g., ```NF-BoT-IoT-v1-multiclassE_GraphSAGE_K2_H128```).
+
+Our provided checkpoints can be overwritten when calling the main script with ```USE_CHECKPOINTS = False```
+
+###### Executing the script
+To execute the script, call the following:
+
+```bash
+(iot_env)$ python main.py
+```
+
 ### hyperparameters.py
 In this script, we run the code to execute the hyperparameter study for EGS.
 The relevant parameters are set in the main function, and they are:
