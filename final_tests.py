@@ -1,6 +1,6 @@
 from configuration import *
 
-from models import e_graphsage, fnn_model, e_graphsage_hembed, enhanced_e_graphsage
+from models import e_graphsage, fnn_model, enhanced_e_graphsage
 from data import IoTDataset
 from train import ModelTrainer
 from tester import ModelTester
