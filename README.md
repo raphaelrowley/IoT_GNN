@@ -47,7 +47,7 @@ The dictionary ```training_config``` sets all hyperparameters for the training l
 The script initializes all models used in our presentation (the E-GraphSAGE baseline model, our 2 hidden layer FNN model, our enhanced E-GraphSAGE model and a DIDS-inspired FNN). 
 The hyperparameters of these models, such as number of layers or the dimension of the node embeddings, can be changed as desired.
 
-##### Checkpoints 
+#### Checkpoints 
 The boolean ```USE_CHECKPOINTS``` controls whether the ```ModelTrainer``` uses existing checkpoints which we provided in the directory ```checkpoints```. 
 If ```ModelTrainer.train_model(model, use_checkpoint=True)``` is called, and valid checkpoints for the model and the dataset are available, the training loop automatically loads and continues from them.
 
@@ -59,7 +59,7 @@ All file names are prefixed with ```…```, which contains the model identifier 
 
 Our provided checkpoints can be overwritten when calling the main script with ```USE_CHECKPOINTS = False```
 
-##### Executing the script
+#### Executing the script
 To execute the script, call the following:
 
 ```bash
