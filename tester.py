@@ -240,21 +240,27 @@ class ModelTester:
                 fn = 0
                 fp = 0
                 tp = 0
+                # GEt the benign class index
+                class_names_list = self.test_data.encoder.inverse_transform(self.test_data.classes)
+                benign_idx = list(class_names_list).index('Benign')
                 # Iterate over rows
                 for i in range(len(conf_matrix)):
                     # True Label = Benign
-                    if i == 0:
+                    if i == benign_idx:
                         tn = conf_matrix[i][i]
-                        # Calculate FP (sum of the other elements of row 1)
-                        for j in range(len(conf_matrix[i])-1):
-                            fp += conf_matrix[i][j+1]
+                        # Calculate FP (sum of the other elements of the Benign row)
+                        for j in range(len(conf_matrix[i])):
+                            # Do not include tn inside fp.
+                            if (j != i):
+                                fp += conf_matrix[i][j]
                     # True Label = An Attack Class
                     else:
-                        # Rest of first column is false negative
-                        fn += conf_matrix[i][0]
+                        # Rest of Benign column is false negative
+                        fn += conf_matrix[i][benign_idx]
                         # Rest of the row is part of TP
-                        for j in range(len(conf_matrix[i])-1):
-                            tp += conf_matrix[i][j+1]
+                        for j in range(len(conf_matrix[i])):
+                            if (j != benign_idx):
+                                tp += conf_matrix[i][j]
 
                 total_samples = tn + tp + fn + fp
 
