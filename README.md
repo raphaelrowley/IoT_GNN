@@ -36,7 +36,7 @@ python -m ipykernel install --user --name iot_env --display-name "Python (iot_en
 ## Important Scripts
 
 ### iot.ipynb
-This notebook serves as an example of how to use the different classes and modules we have created. It shows how to load in datasets, train models and test them. Specifically, the notebook allows to train and test the E-GraphSAGE baseline model, our 2 hidden layer FNN model and our enhanced E-GraphSAGE model that aggregates both edge and node features. This can be done whilst randomizing the source IPs of the dataset or not. This is done for 3 datasets: NF-BoT-IoT-v1, NF-ToN-IoT-v1 and NF-UNSW-NB15-v1.
+This notebook serves as an example of how to use the different classes and modules we have created. It shows how to load in datasets, train models and test them. Specifically, the notebook allows to train and test the E-GraphSAGE baseline model, our 2 hidden layer FNN model and our enhanced E-GraphSAGE model that aggregates both edge and node features. This can be done whilst randomizing the source IPs of the dataset or not. This is done for the NF-BoT-IoT-v1 dataset.
 
 ### main.py
 
