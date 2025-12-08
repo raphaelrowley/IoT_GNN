@@ -1,0 +1,87 @@
+===== Multiclass Test Report =====
+== Benign ==
+Precision: 0.998831
+Recall:    0.602204
+F1-score:  0.751389
+
+== backdoor ==
+Precision: 0.468167
+Recall:    0.982894
+F1-score:  0.634238
+
+== ddos ==
+Precision: 0.624353
+Recall:    0.385991
+F1-score:  0.477055
+
+== dos ==
+Precision: 0.182648
+Recall:    0.999711
+F1-score:  0.308866
+
+== injection ==
+Precision: 0.632298
+Recall:    0.400607
+F1-score:  0.490467
+
+== mitm ==
+Precision: 0.054924
+Recall:    0.451362
+F1-score:  0.097932
+
+== password ==
+Precision: 0.254506
+Recall:    0.448844
+F1-score:  0.324827
+
+== ransomware ==
+Precision: 0.133333
+Recall:    1.000000
+F1-score:  0.235294
+
+== scanning ==
+Precision: 0.079269
+Recall:    0.154216
+F1-score:  0.104714
+
+== xss ==
+Precision: 0.173886
+Recall:    0.347728
+F1-score:  0.231838
+
+== weighted avg ==
+Precision: 0.591496
+Recall:    0.447685
+F1-score:  0.484257
+
+= Global Metrics =
+Accuracy:           0.447685
+Balanced Accuracy:  0.577356
+
+Confusion Matrix:
+[[25631   320   658  7128  3904  1730   404   153  2609    25]
+ [    2  3390     1    25     0     2     0    29     0     0]
+ [   25    67 17480  4475   255    60 10897     0  4835  7192]
+ [    0     0     1  3463     0     0     0     0     0     0]
+ [    2  2596  9807  2380 37212   204 21115     0     9 19564]
+ [    1     1     3   126     6   116     0     0     4     0]
+ [    0     0     5   119 11241     0 13512     0     0  5227]
+ [    0     0     0     0     0     0     0    28     0     0]
+ [    0     0     0   542   702     0  1271     0   642  1006]
+ [    0   867    42   702  5532     0  5892     0     0  6949]]
+
+= Binary Metrics =
+TN, TP, FN, FP are derived from the confusion matrix.
+Benign is the negative class. The attack classes are positive.
+Total Samples: 242186
+TN: 25631
+TP: 199594
+FN: 30
+FP: 16931
+
+Accuracy: 0.929967
+Balanced Accuracy: 0.801027
+FAR: 0.397796
+Recall: 0.999850
+Precision: 0.921806
+F1-score: 0.959243
