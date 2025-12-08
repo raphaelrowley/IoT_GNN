@@ -44,7 +44,7 @@ This notebook serves as an example of how to use the different classes and modul
 In this script, we run the code to execute the hyperparameter study for EGS.
 The relevant parameters are set in the main function, and they are:
 
-<pre> ```{
+<pre>{
     dataset: str, specifying the name of the dataset (for this study, we only use 'NF-BoT-IoT')
     version: int, specifying the version of the dataset (for this study, we only use version 1)
     randomized_list: list of bool, specifying whether to randomize source IPs or not
@@ -54,7 +54,7 @@ The relevant parameters are set in the main function, and they are:
     numRealizations: int, specifying the number of runs for experiments, where the random seed is different for each run
     numK: int, specifying the number of hidden layers to consider in EGS
     dimH: int, specifying the hidden dimension size in EGS
-}``` </pre>
+}</pre>
 The results, namely class-weighted recall and F1-score, are saved in the 'hyperparam' directory. For each run, they correspond to the metrics obtained on the validation set for the epoch with the lowest validation loss. Observe that even for the non-randomized case, we still have multiple runs with different random seeds, as they affect the initialization of the model weights.
 After setting the relevant parameters, the script can be run as follows:
 ```bash
@@ -70,14 +70,14 @@ After setting the relevant parameters, the script can be run as follows:
 
 ### data_info.py
 This script is used to study the dataset of interest, that is, NF-BoT-IoT version 1. The relevant parameters for this script are:
-{
+<pre>{
     dataset: str, specifying the name of the dataset (for this study, we only use 'NF-BoT-IoT')
     version: int, specifying the version of the dataset (for this study, we only use version 1)
     randomized_source_ip: bool, specifying whether to randomize source IPs or not
     print_df_info: bool, specifying whether to print the dataset information
     print_graph_info: bool, specifying whether to print graph information associated with the dataset
     random_seed: int, specifying the random seed used for randomization of source IPs (if applicable)
-}
+}</pre>
 In this script, we print important information on the dataset, such as the number of samples, number of features, data type of each feature and so on. Regarding the associated graph, we print information such as the number of nodes, number of edges, degree distribution. More importantly, we check whether or not the graph has cycles. If yes, we print the longest path found in the graph. This is important to understand whether multi-hop message passing can be effective in this graph.
 
 After setting the relevant parameters, the script can be run as follows:
