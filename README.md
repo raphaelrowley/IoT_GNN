@@ -27,8 +27,12 @@ To run a notebook using iot_env, select the iot_env kernel to run the ipynb.
 ## Datasets
 
 ## Important Scripts
+
 ### iot.ipynb
+This notebook serves as an example of how to use the different classes and modules we have created. It shows how to load in datasets, train models and test them. Specifically, the notebook allows to train and test the E-GraphSAGE baseline model, our 2 hidden layer FNN model and our enhanced E-GraphSAGE model that aggregates both edge and node features. This can be done whilst randomizing the source IPs of the dataset or not. This is done for 3 datasets: NF-BoT-IoT-v1, NF-ToN-IoT-v1 and NF-UNSW-NB15-v1.
+
 ### main.py
+
 ### hyperparameters.py
 In this script, we run the code to execute the hyperparameter study for EGS.
 The relevant parameters are set in the main function, and they are:
@@ -61,11 +65,19 @@ This script is used to study the dataset of interest, that is, NF-BoT-IoT versio
 In this script, we print important information on the dataset, such as the number of samples, number of features, data type of each feature and so on. Regarding the associated graph, we print information such as the number of nodes, number of edges, degree distribution. More importantly, we check whether or not the graph has cycles. If yes, we print the longest path found in the graph. This is important to understand whether multi-hop message passing can be effective in this graph.
 
 ### final_tests.py
+This script is used to train and test all of our different GNNs in one script. It was used to obtain our final results on the test set for NF-BoT-IoT-v1, as well as the other datasets. By default, this script executes training and testing on a GPU. This is set in the script at line 109 for training and at line 166 for testing.
+
+The script first sets the dataset_config dict and loads the training, validation and testing datasets. Next, the various models are instantiated and a breakdown of their parameters is printed. The models are then trained and tested; all of the models are first trained and then all of them are tested.  
+
+The recommended way of running:
+```bash
+(iot_env)$ python final_tests.py
+```  
 
 ## Results
 ### @Moritz (how to use the results thing)
 (We have NF-BoT, NF-ToN and UNSW all randomized. Plus, we have NF-BoT non randomized.)
-### (hyperparam directory)
+### hyperparam directory
 The 'hyperparam' directory contains the results obtained from the hyperparameter study for EGS on NF-BoT-IoT version 1. Each file in this directory is associated with results for each run index (given by 'g') and whether source IPs are randomized or not. Each run corresponds to a different random seed. Each file corresponds to the results for the set of attempted hyperparameters (numK and dimH). The files can be read using the getResults-hyperparameter.py script to obtain the summarized results (mean, standard deviation, minimum, and maximum of class-weighted recall and F1-score) over multiple runs (in this study, five) for each parameter combination.
 
 ## Notes on Infrastructure
