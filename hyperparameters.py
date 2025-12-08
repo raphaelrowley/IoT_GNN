@@ -91,12 +91,6 @@ def main(dataset, version, randomized, model_type, multiclass, numEpochs, numK, 
                                             dropout=0.2,
                                             normalization=False
                                             )
-            elif model_type == 'E_GraphSAGE_hEmbed':
-                model = e_graphsage_hembed.E_GraphSAGE_hEmbed(numLayers=k,
-                                            dim_node_embed=h,
-                                            num_edge_attr=train_data.num_features,
-                                            num_classes=len(train_data.classes)
-                                            )
             else:
                 print('Model type not recognized.')
             f1_score[idx_k,idx_h], re_score[idx_k,idx_h] = validation(model, trainer)
