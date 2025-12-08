@@ -22,7 +22,14 @@ Then, the conda environment has to be exported in order to use it for a Jupyter 
 conda install ipykernel
 python -m ipykernel install --user --name iot_env --display-name "Python (iot_env)"
 ```  
-To run a notebook using iot_env, select the iot_env kernel to run the ipynb.
+To run a notebook using iot_env, select the iot_env kernel to run the ipynb.  
+
+Alternatively, the conda environment can be created using the provided environment.yaml file. We still need to export the environment to use with a Jupyter Notebook.
+```bash
+conda env create --name iot_env -f environment.yaml
+conda activate iot_env
+python -m ipykernel install --user --name iot_env --display-name "Python (iot_env)"
+```  
 
 ## Datasets
 
@@ -72,6 +79,10 @@ The script first sets the dataset_config dict and loads the training, validation
 The recommended way of running:
 ```bash
 (iot_env)$ python final_tests.py
+```  
+**Note:** as stated in the script, the conda environment has to be updated to use this script (if the environment was created with the manual steps).  
+```bash
+(iot_env)$ conda install conda-forge::torchinfo
 ```  
 
 ## Results
