@@ -1,0 +1,14 @@
+name: iot_env
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pytorch
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - pytorch::torchdata
+  - conda-forge::dgl
+  - ipykernel
+  - conda-forge::torchinfo
+prefix: /home/rowleyra/anaconda3/envs/iot_env
