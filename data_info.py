@@ -106,7 +106,7 @@ def getGraphInfo(graph):
 
 def getParameters():
     """
-    Returns the relevant parameters for getting data information on the NF-BoT-IoT dataset and 
+    Returns the relevant parameters for getting data information on the NF-BoT-IoT dataset and its
     associated graph.
     ------------
     output:
@@ -114,8 +114,8 @@ def getParameters():
     version: int, version number of the dataset
     randomized_source_ip: bool, whether to randomize source IP addresses
     print_df_info: bool, whether to print dataframe information
-    print_graph_info: bool, whether to print graph information
-    random_seed: int, random seed for reproducibility
+    print_graph_info: bool, whether to print graph information associated with the dataset
+    random_seed: int, random seed for reproducibility in the case of randomized source IPs
     ------------
     Notes:
     - For non-randomized IP, the graph contains cycles, so longest path is not computed due to computational constraints.
@@ -131,7 +131,7 @@ def getParameters():
     random_seed = 34
     return dataset, version, randomized_source_ip, print_df_info, print_graph_info, random_seed
 
-# The code here was based on data.py
+# The code is based on data.py
 if __name__ == "__main__":
     dataset, version, randomized_source_ip, print_df_info, print_graph_info, random_seed = getParameters()
 

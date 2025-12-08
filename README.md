@@ -40,13 +40,13 @@ The relevant parameters are set in the main function, and they are:
     multiclass: bool, specifying whether the task is multiclass classification (for this study, we use True)
     numEpochs: int, specifying the number of training epochs
     numRealizations: int, specifying the number of runs for experiments, where the random seed is different for each run
-    numK: int, specifying the number of layers to consider in EGS
+    numK: int, specifying the number of hidden layers to consider in EGS
     dimH: int, specifying the hidden dimension size in EGS
 }
 The results, namely class-weighted recall and F1-score, are saved in the 'hyperparam' directory. For each run, they correspond to the metrics obtained on the validation set for the epoch with the lowest validation loss. Observe that even for the non-randomized case, we still have multiple runs with different random seeds, as they affect the initialization of the model weights.
 
 ### getResults-hyperparameter.py
-This script is used to read the results obtained from the hyperparameter study and print the results of EGS for parameter combinations. For a given set of parameters, the printed results consider the mean, standard deviation, minimum, and maximum of the class-weighted recall and F1-score over all runs. The set of relevant parameters to read the results are similar to the hyperparameters.py script.
+This script is used to read the results obtained from the hyperparameter study for EGS and print the results for all parameter combinations. For a given set of parameters, the printed results consider the mean, standard deviation, minimum, and maximum of the class-weighted recall and F1-score over all runs. The set of relevant parameters to read the results are similar to the hyperparameters.py script.
 
 ### data_info.py
 This script is used to study the dataset of interest, that is, NF-BoT-IoT version 1. The relevant parameters for this script are:
@@ -65,8 +65,8 @@ In this script, we print important information on the dataset, such as the numbe
 ## Results
 ### @Moritz (how to use the results thing)
 (We have NF-BoT, NF-ToN and UNSW all randomized. Plus, we have NF-BoT non randomized.)
-### @Joao (hyperparam directory)
-The 'hyperparam' directory contains the results obtained from the hyperparameter study for EGS on NF-BoT-IoT version 1. Each file in this directory corresponds to a specific combination of hyperparameters (numK and dimH) and whether source IPs were randomized or not. The files can be read using the getResults-hyperparameter.py script to obtain the summarized results (mean, standard deviation, minimum, and maximum of class-weighted recall and F1-score) over multiple runs (in this study, five) for each parameter combination. Each run corresponds to a different random seed.
+### (hyperparam directory)
+The 'hyperparam' directory contains the results obtained from the hyperparameter study for EGS on NF-BoT-IoT version 1. Each file in this directory is associated with results for each run index (given by 'g') and whether source IPs are randomized or not. Each run corresponds to a different random seed. Each file corresponds to the results for the set of attempted hyperparameters (numK and dimH). The files can be read using the getResults-hyperparameter.py script to obtain the summarized results (mean, standard deviation, minimum, and maximum of class-weighted recall and F1-score) over multiple runs (in this study, five) for each parameter combination.
 
 ## Notes on Infrastructure
 For training and testing, we used a PNY GeForce RTX 2080 Ti 11GB Blower GPU graphics card.
