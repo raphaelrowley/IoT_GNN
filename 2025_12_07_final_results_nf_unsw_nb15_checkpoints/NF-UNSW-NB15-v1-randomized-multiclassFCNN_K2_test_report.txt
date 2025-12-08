@@ -1,0 +1,87 @@
+===== Multiclass Test Report =====
+== Analysis ==
+Precision: 0.053758
+Recall:    0.828715
+F1-score:  0.100967
+
+== Backdoor ==
+Precision: 0.056818
+Recall:    0.126761
+F1-score:  0.078466
+
+== Benign ==
+Precision: 0.998789
+Recall:    0.748551
+F1-score:  0.855751
+
+== DoS ==
+Precision: 0.082251
+Recall:    0.056548
+F1-score:  0.067019
+
+== Exploits ==
+Precision: 0.069071
+Recall:    0.351264
+F1-score:  0.115442
+
+== Fuzzers ==
+Precision: 0.336384
+Recall:    0.532471
+F1-score:  0.412301
+
+== Generic ==
+Precision: 0.273684
+Recall:    0.397840
+F1-score:  0.324285
+
+== Reconnaissance ==
+Precision: 0.080529
+Recall:    0.699511
+F1-score:  0.144430
+
+== Shellcode ==
+Precision: 0.009867
+Recall:    0.996337
+F1-score:  0.019540
+
+== Worms ==
+Precision: 0.017445
+Recall:    1.000000
+F1-score:  0.034292
+
+== weighted avg ==
+Precision: 0.960893
+Recall:    0.735700
+F1-score:  0.826636
+
+= Global Metrics =
+Accuracy:           0.735700
+Balanced Accuracy:  0.573800
+
+Confusion Matrix:
+[[   329     47      0      4      0      2      6      0      8      1]
+ [   234     45      0      5      0      4     11      0     47      9]
+ [  3555    360 229231    321  23272   3653    359  19088  26210    184]
+ [   441     54     24     57     83     70    113     20     39    107]
+ [   718     72    231    271   1737    294    478     23    265    856]
+ [   271     66      0      4      1   2058    200    484    663    118]
+ [   300     77     19     28     53     31    442      1     58    102]
+ [   272     71      4      3      2      5      6   1718      6    369]
+ [     0      0      0      0      0      1      0      0    272      0]
+ [     0      0      0      0      0      0      0      0      0     31]]
+
+= Binary Metrics =
+TN, TP, FN, FP are derived from the confusion matrix.
+Benign is the negative class. The attack classes are positive.
+Total Samples: 320674
+TN: 229231
+TP: 14163
+FN: 278
+FP: 77002
+
+Accuracy: 0.759008
+Balanced Accuracy: 0.864650
+FAR: 0.251449
+Recall: 0.980749
+Precision: 0.155356
+F1-score: 0.268223
