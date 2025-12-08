@@ -6,6 +6,7 @@ def get_dataframe(dataset, version, print_info=False):
     """
     Loads the dataframe for the specified dataset and version, 
     removing duplicates and NaN valus.
+    This function also prints dataset information if specified by flag print_info.
     ------------
     input:
     dataset: str, name of the dataset
@@ -104,12 +105,30 @@ def getGraphInfo(graph):
         print("Longest path:", nx.dag_longest_path_length(graph))
 
 def getParameters():
+    """
+    Returns the relevant parameters for getting data information on the NF-BoT-IoT dataset and 
+    associated graph.
+    ------------
+    output:
+    dataset: str, name of the dataset
+    version: int, version number of the dataset
+    randomized_source_ip: bool, whether to randomize source IP addresses
+    print_df_info: bool, whether to print dataframe information
+    print_graph_info: bool, whether to print graph information
+    random_seed: int, random seed for reproducibility
+    ------------
+    Notes:
+    - For non-randomized IP, the graph contains cycles, so longest path is not computed due to computational constraints.
+    - For non-randomized, the random seed is irrelevant.
+    ------------
+
+    """
     dataset = "NF-BoT-IoT"
     version = 1
-    randomized_source_ip = False
+    randomized_source_ip = True
     print_df_info = False
     print_graph_info = True
-    random_seed = 30
+    random_seed = 34
     return dataset, version, randomized_source_ip, print_df_info, print_graph_info, random_seed
 
 # The code here was based on data.py
