@@ -59,6 +59,17 @@ All file names are prefixed with ```…```, which contains the model identifier 
 
 Our provided checkpoints can be overwritten when calling the main script with ```USE_CHECKPOINTS = False```
 
+We have provided checkpoints for the datasets  
+- ````'NF-BoT-IoT'```` (version 1, randomized and non-randomized IPs)
+- ```'NF-ToN-IoT'``` (version 1, randomized IPs)
+- ```'NF_UNSW-NB15-v1'``` (version 1, randomized IPs).
+
+For each of these datasets, checkpoints are provided for multiclass classification with the following models:
+- Baseline EGS with 2 hidden EGS layers and a node embedding size of 128
+- All variants of enhanced EGS with 2 hidden enhanced EGS layers and a node embedding size of 128.
+- Baseline fully connected FNN with 2 hidden layers and hidden layer dimensions of 128 and 192.
+- DIDS-inspired FNN with 5 hidden layers and hidden layer widths of 18, 36, 72, 144, and 256.
+
 ###### Executing the script
 To execute the script, call the following:
 
@@ -126,8 +137,7 @@ The recommended way of running:
 ```  
 
 ## Results
-### @Moritz (how to use the results thing)
-(We have NF-BoT, NF-ToN and UNSW all randomized. Plus, we have NF-BoT non randomized.)
+
 ### hyperparam directory
 The 'hyperparam' directory contains the results obtained from the hyperparameter study for EGS on NF-BoT-IoT version 1. Each file in this directory is associated with results for each run index (given by 'g') and whether source IPs are randomized or not. Each run corresponds to a different random seed. Each file corresponds to the results for the set of attempted hyperparameters (numK and dimH). The files can be read using the getResults-hyperparameter.py script to obtain the summarized results (mean, standard deviation, minimum, and maximum of class-weighted recall and F1-score) over multiple runs (in this study, five) for each parameter combination.
 
