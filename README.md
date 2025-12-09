@@ -8,27 +8,27 @@ The commands to create the conda environment with the required packages are belo
 
 Commands to create the environment and install the minimal packages:
 ```bash
-conda create -n iot_env python=3.11
-conda activate iot_env
-conda install pytorch
-conda install pandas
-conda install scikit-learn
-conda install matplotlib
-conda install pytorch::torchdata
-conda install conda-forge::dgl
+(base) $ conda create -n iot_env python=3.11
+(base) $ conda activate iot_env
+(iot_env) $ conda install pytorch
+(iot_env) $ conda install pandas
+(iot_env) $ conda install scikit-learn
+(iot_env) $ conda install matplotlib
+(iot_env) $ conda install pytorch::torchdata
+(iot_env) $ conda install conda-forge::dgl
 ```  
 Then, the conda environment has to be exported in order to use it for a Jupyter Notebook.  
 ```bash
-conda install ipykernel
-python -m ipykernel install --user --name iot_env --display-name "Python (iot_env)"
+(iot_env) $ conda install ipykernel
+(iot_env) $ python -m ipykernel install --user --name iot_env --display-name "Python (iot_env)"
 ```  
 To run a notebook using iot_env, select the iot_env kernel to run the ipynb.  
 
 Alternatively, the conda environment can be created using the provided environment.yaml file. We still need to export the environment to use with a Jupyter Notebook.
 ```bash
-conda env create --name iot_env -f environment.yaml
-conda activate iot_env
-python -m ipykernel install --user --name iot_env --display-name "Python (iot_env)"
+(base) $ conda env create --name iot_env -f environment.yaml
+(base) $ conda activate iot_env
+(iot_env) $ python -m ipykernel install --user --name iot_env --display-name "Python (iot_env)"
 ```  
 
 ## Datasets
