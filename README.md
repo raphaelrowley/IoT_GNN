@@ -32,7 +32,7 @@ python -m ipykernel install --user --name iot_env --display-name "Python (iot_en
 ```  
 
 ## Datasets
-
+Please refer to the README in data/.
 ## Important Scripts
 
 ### iot.ipynb
