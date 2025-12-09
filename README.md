@@ -98,6 +98,9 @@ After setting the relevant parameters, the script can be run as follows:
 (iot_env)$ python hyperparameters.py
 ```
 
+#### hyperparam directory
+The 'hyperparam' directory contains the results obtained from the hyperparameter study for EGS on NF-BoT-IoT version 1. Each file in this directory is associated with results for each run index (given by 'g') and whether source IPs are randomized or not. Each run corresponds to a different random seed. Each file corresponds to the results for the set of attempted hyperparameters (numK and dimH). The files can be read using the getResults-hyperparameter.py script to obtain the summarized results (mean, standard deviation, minimum, and maximum of class-weighted recall and F1-score) over multiple runs (in this study, five) for each parameter combination.
+
 ### getResults-hyperparameter.py
 This script is used to read the results obtained from the hyperparameter study for EGS and print the results for all parameter combinations. For a given set of parameters, the printed results consider the mean, standard deviation, minimum, and maximum of the class-weighted recall and F1-score over all runs. The set of relevant parameters to read the results are similar to the hyperparameters.py script.
 After setting the relevant parameters, the script can be run as follows:
@@ -135,11 +138,6 @@ The recommended way of running:
 ```bash
 (iot_env)$ conda install conda-forge::torchinfo
 ```  
-
-## Results
-
-### hyperparam directory
-The 'hyperparam' directory contains the results obtained from the hyperparameter study for EGS on NF-BoT-IoT version 1. Each file in this directory is associated with results for each run index (given by 'g') and whether source IPs are randomized or not. Each run corresponds to a different random seed. Each file corresponds to the results for the set of attempted hyperparameters (numK and dimH). The files can be read using the getResults-hyperparameter.py script to obtain the summarized results (mean, standard deviation, minimum, and maximum of class-weighted recall and F1-score) over multiple runs (in this study, five) for each parameter combination.
 
 ## Notes on Infrastructure
 For training and testing, we used a PNY GeForce RTX 2080 Ti 11GB Blower GPU graphics card.
