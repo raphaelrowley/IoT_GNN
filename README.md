@@ -66,9 +66,9 @@ We have provided checkpoints for the datasets
 
 For each of these datasets, checkpoints are provided for multiclass classification with the following models:
 - Baseline EGS with 2 hidden EGS layers and a node embedding size of 128
-- All variants of enhanced EGS with 2 hidden enhanced EGS layers and a node embedding size of 128.
-- Baseline fully connected FNN with 2 hidden layers and hidden layer dimensions of 128 and 192.
-- DIDS-inspired FNN with 5 hidden layers and hidden layer widths of 18, 36, 72, 144, and 256.
+- All variants of enhanced EGS with 2 hidden enhanced EGS layers and a node embedding size of 128 (except for the variant with attention, gating and residual connection, the variant with both attention and residual connection and the variant with both gating and residual connection on ```'NF-UNSW-NB15'```, where they ran out of memory)
+- Baseline fully connected FNN with 2 hidden layers and hidden layer dimensions of 128 and 192
+- DIDS-inspired FNN with 5 hidden layers and hidden layer widths of 18, 36, 72, 144, and 256
 
 #### Executing the script
 To execute the script, call the following:
