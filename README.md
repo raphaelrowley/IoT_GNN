@@ -62,7 +62,7 @@ Our provided checkpoints can be overwritten when calling the main script with ``
 We have provided checkpoints for the datasets  
 - ````'NF-BoT-IoT'```` (version 1, randomized and non-randomized IPs)
 - ```'NF-ToN-IoT'``` (version 1, randomized IPs)
-- ```'NF_UNSW-NB15-v1'``` (version 1, randomized IPs).
+- ```'NF-UNSW-NB15'``` (version 1, randomized IPs).
 
 For each of these datasets, checkpoints are provided for multiclass classification with the following models:
 - Baseline EGS with 2 hidden EGS layers and a node embedding size of 128
