@@ -22,7 +22,7 @@ def main():
         'lr': 1e-3,
         'gpu': True,
         'lr_sched_factor': np.sqrt(10),
-        'lr_sched_patience': 300,  # Decrease to enable learning rate scheduling
+        'lr_sched_patience': 100,  # Decrease to scale learning rate scheduling more aggressively
     }
 
     USE_CHECKPOINTS = False
